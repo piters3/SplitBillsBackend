@@ -37,7 +37,7 @@ namespace SplitBillsBackend.Controllers
         // POST api/accounts
         [AllowAnonymous]
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(RegisterModel model)
+        public async Task<IActionResult> Register([FromBody]RegisterModel model)
         {
             if (!ModelState.IsValid)
             {

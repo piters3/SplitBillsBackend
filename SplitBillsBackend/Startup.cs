@@ -54,6 +54,7 @@ namespace SplitBillsBackend
 
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.TryAddTransient<IBillsRepository, BillsRepository>();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
@@ -131,8 +132,15 @@ namespace SplitBillsBackend
             builder.AddEntityFrameworkStores<SplitBillsDbContext>().AddDefaultTokenProviders();
 
             services.AddAutoMapper();
-            services.AddMvc();
-            //services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+            services.AddCors();
+            services.AddMvc()
+
+            .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver
+                        = new Newtonsoft.Json.Serialization.DefaultContractResolver();
+                });     
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, SplitBillsDbContext dbContext)
@@ -173,7 +181,14 @@ namespace SplitBillsBackend
             app.UseAuthentication();
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .AllowCredentials());
             app.UseMvc();
+
         }
     }
 }
