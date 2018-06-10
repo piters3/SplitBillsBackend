@@ -53,7 +53,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest(result);
             }
 
-            return Ok("Account created");
+            return new OkObjectResult(new { Message = "Konto zostało utworzone" });
         }
 
 
@@ -73,7 +73,7 @@ namespace SplitBillsBackend.Controllers
             }
 
             var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, credentials.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
-            return Ok(jwt);
+            return new OkObjectResult(jwt);
         }
 
         private async Task<ClaimsIdentity> GetClaimsIdentity(string userName, string password)

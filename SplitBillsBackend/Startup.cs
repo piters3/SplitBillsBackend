@@ -135,7 +135,7 @@ namespace SplitBillsBackend
             //services.AddMvc().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, SplitBillsDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
@@ -168,6 +168,7 @@ namespace SplitBillsBackend
                 c.RoutePrefix = string.Empty;
             });
 
+            //DbInitializer.Initialize(dbContext);
 
             app.UseAuthentication();
             app.UseDefaultFiles();

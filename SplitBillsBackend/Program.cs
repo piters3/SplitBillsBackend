@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace SplitBillsBackend
 {
@@ -23,10 +19,12 @@ namespace SplitBillsBackend
             //        .AddEnvironmentVariables();
             //    Configuration = builder.Build();
 
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
             var host = new WebHostBuilder()
                  .UseKestrel()
                  .UseContentRoot(Directory.GetCurrentDirectory())
-                 .UseUrls("http://localhost:59987", "http://odin:59987", "http://192.168.0.81:59987")
+                 .UseUrls(environment == "Development" ? "http://localhost:50000" : "http://192.168.0.81:59987")
                  .UseConfiguration(new ConfigurationBuilder()
                     .SetBasePath(Directory.GetCurrentDirectory())
                     .AddJsonFile("appsettings.json")

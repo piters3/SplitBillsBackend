@@ -11,9 +11,10 @@ using System;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    partial class SplitBillsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180610123545_Bills")]
+    partial class Bills
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -141,7 +142,11 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<string>("Notes");
 
+                    b.Property<string>("UserId");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Bills");
                 });
@@ -181,6 +186,8 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
+                    b.Property<int?>("BillId");
+
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -216,6 +223,8 @@ namespace SplitBillsBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BillId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasName("EmailIndex");
 
@@ -225,19 +234,6 @@ namespace SplitBillsBackend.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
-                });
-
-            modelBuilder.Entity("SplitBillsBackend.Entities.UserBill", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.Property<int>("BillId");
-
-                    b.HasKey("UserId", "BillId");
-
-                    b.HasIndex("BillId");
-
-                    b.ToTable("UserBill");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -285,6 +281,13 @@ namespace SplitBillsBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("SplitBillsBackend.Entities.Bill", b =>
+                {
+                    b.HasOne("SplitBillsBackend.Entities.User")
+                        .WithMany("Bills")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("SplitBillsBackend.Entities.Subcategory", b =>
                 {
                     b.HasOne("SplitBillsBackend.Entities.Category", "Category")
@@ -293,17 +296,11 @@ namespace SplitBillsBackend.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("SplitBillsBackend.Entities.UserBill", b =>
+            modelBuilder.Entity("SplitBillsBackend.Entities.User", b =>
                 {
-                    b.HasOne("SplitBillsBackend.Entities.Bill", "Bill")
-                        .WithMany("UserBills")
-                        .HasForeignKey("BillId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("SplitBillsBackend.Entities.User", "User")
-                        .WithMany("UserBills")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.HasOne("SplitBillsBackend.Entities.Bill")
+                        .WithMany("Users")
+                        .HasForeignKey("BillId");
                 });
 #pragma warning restore 612, 618
         }
