@@ -20,6 +20,8 @@ using SplitBillsBackend.Auth;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
+using Newtonsoft.Json;
+using SplitCategorysBackend.Data;
 
 namespace SplitBillsBackend
 {
@@ -55,6 +57,7 @@ namespace SplitBillsBackend
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddTransient<IBillsRepository, BillsRepository>();
+            services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 
@@ -135,12 +138,14 @@ namespace SplitBillsBackend
 
             services.AddCors();
             services.AddMvc()
-
             .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver
                         = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-                });     
+                }).AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, SplitBillsDbContext dbContext)
@@ -153,19 +158,19 @@ namespace SplitBillsBackend
             app.UseExceptionHandler(
             builder =>
             {
-                 builder.Run(
-                            async context =>
-                             {
-                                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                                 context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+                builder.Run(
+                           async context =>
+                            {
+                                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                                context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
 
-                                 var error = context.Features.Get<IExceptionHandlerFeature>();
-                                 if (error != null)
-                                 {
-                                     context.Response.AddApplicationError(error.Error.Message);
-                                     await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
-                                 }
-                             });
+                                var error = context.Features.Get<IExceptionHandlerFeature>();
+                                if (error != null)
+                                {
+                                    context.Response.AddApplicationError(error.Error.Message);
+                                    await context.Response.WriteAsync(error.Error.Message).ConfigureAwait(false);
+                                }
+                            });
             });
 
             app.UseSwagger();
