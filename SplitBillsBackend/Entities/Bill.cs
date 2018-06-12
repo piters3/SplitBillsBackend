@@ -17,6 +17,7 @@ namespace SplitBillsBackend.Entities
         public string Notes { get; set; }
 
         //public virtual List<User> Users { get; set; }
+
         public virtual List<UserBill> UserBills { get; set; }
     }
 }

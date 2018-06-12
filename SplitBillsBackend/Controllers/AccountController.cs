@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -47,7 +48,7 @@ namespace SplitBillsBackend.Controllers
 
             if (!result.Succeeded)
             {
-                return BadRequest(result);
+                return BadRequest(result.Errors.Select(e => e.Description));
             }
 
             return new OkObjectResult(new { Message = "Konto zostało utworzone" });

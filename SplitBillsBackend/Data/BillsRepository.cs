@@ -22,7 +22,7 @@ namespace SplitBillsBackend.Data
 
         public IEnumerable<Bill> GetAll()
         {
-            return _ctx.Bills.ToList();
+            return _ctx.Bills.Include(x=>x.UserBills).ToList();
         }
 
         public Bill Get(int id)

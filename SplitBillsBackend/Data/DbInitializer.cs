@@ -12,9 +12,9 @@ namespace SplitBillsBackend.Data
         {
             context.Database.EnsureCreated();
 
-            AddData(context);
-
             AddUsersAndRoles(context);
+
+            AddData(context);
         }
 
         private static void AddUsersAndRoles(SplitBillsDbContext context)
@@ -157,6 +157,39 @@ namespace SplitBillsBackend.Data
                 }
             }
             context.SaveChanges();
+
+            var userbills = new List<UserBill>
+            {
+                new UserBill{ Bill = bills[0], User = context.Users.ToList()[0] },
+                new UserBill{ Bill = bills[1], User = context.Users.ToList()[1] }
+            };
+
+            foreach (var b in userbills)
+            {
+                if (!context.UserBills.Any(x => x.Bill == b.Bill))
+                {
+                    context.UserBills.Add(b);
+                }
+            }
+            context.SaveChanges();
+
+            context.Users.ToList()[0].Friends.Add(new Friend { UserFriend = context.Users.ToList()[1] });
+
+            context.SaveChanges();
+
+            //var friends = new List<Friend>
+            //{
+            //    new Friend{FirstFriend = context.Users.ToList()[0], SecondFriend = context.Users.ToList()[1]}
+            //};
+
+            //foreach (var b in friends)
+            //{
+            //    if (!context.Friends.Any(x => x.FirstFriend == b.FirstFriend))
+            //    {
+            //        context.Friends.Add(b);
+            //    }
+            //}
+            //context.SaveChanges();
         }
     }
 }
