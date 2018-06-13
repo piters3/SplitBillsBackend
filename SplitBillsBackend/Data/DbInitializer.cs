@@ -145,8 +145,8 @@ namespace SplitBillsBackend.Data
 
             var bills = new List<Bill>
             {
-                new Bill{ Amount = 100.2m, Date = DateTime.Now, Description = "Bułki", Notes = "Notatki" },
-                new Bill{ Amount = 23.76m, Date = DateTime.Now, Description = "Kino", Notes = "Kino notatki" }
+                new Bill{ TotalAmount = 100.2m, Date = DateTime.Now, Description = "Bułki", Notes = "Notatki", Subcategory = food[0] },
+                new Bill{ TotalAmount = 23.76m, Date = DateTime.Now, Description = "Kino", Notes = "Kino notatki", Subcategory = entertainment[1] }
             };
 
             foreach (var b in bills)
@@ -160,8 +160,9 @@ namespace SplitBillsBackend.Data
 
             var userbills = new List<UserBill>
             {
-                new UserBill{ Bill = bills[0], User = context.Users.ToList()[0] },
-                new UserBill{ Bill = bills[1], User = context.Users.ToList()[1] }
+                new UserBill{ Bill = bills[0], User = context.Users.ToList()[0], Amount = 50.1m },
+                new UserBill{ Bill = bills[0], User = context.Users.ToList()[1], Amount = 50.1m },
+                new UserBill{ Bill = bills[1], User = context.Users.ToList()[1], Amount = bills[1].TotalAmount }
             };
 
             foreach (var b in userbills)
@@ -173,23 +174,11 @@ namespace SplitBillsBackend.Data
             }
             context.SaveChanges();
 
-            context.Users.ToList()[0].Friends.Add(new Friend { UserFriend = context.Users.ToList()[1] });
-
+            if (!context.Friends.Any())
+            {
+                context.Users.ToList()[0].Friends.Add(new Friend { FirstFriend = context.Users.ToList()[0], SecondFriend = context.Users.ToList()[1] });
+            }
             context.SaveChanges();
-
-            //var friends = new List<Friend>
-            //{
-            //    new Friend{FirstFriend = context.Users.ToList()[0], SecondFriend = context.Users.ToList()[1]}
-            //};
-
-            //foreach (var b in friends)
-            //{
-            //    if (!context.Friends.Any(x => x.FirstFriend == b.FirstFriend))
-            //    {
-            //        context.Friends.Add(b);
-            //    }
-            //}
-            //context.SaveChanges();
         }
     }
 }

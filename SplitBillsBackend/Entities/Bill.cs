@@ -12,12 +12,13 @@ namespace SplitBillsBackend.Entities
 
         public int Id { get; set; }
         public string Description { get; set; }
-        public decimal Amount { get; set; }
+        public decimal TotalAmount { get; set; }
         public DateTime Date { get; set; }
         public string Notes { get; set; }
 
         //public virtual List<User> Users { get; set; }
 
         public virtual List<UserBill> UserBills { get; set; }
+        public virtual Subcategory Subcategory { get; set; }
     }
 }

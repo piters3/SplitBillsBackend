@@ -43,18 +43,27 @@ namespace SplitBillsBackend.Data
                 property.Relational().ColumnType = "decimal(7, 2)";
             }
 
+            //builder.Entity<User>()
+            //    .HasMany(oj => oj.Friends)
+            //    .WithOne(j => j.Parent)
+            //    .HasForeignKey(j => j.JobId);
+
+
             //builder.Entity<Friend>()
             //    .HasKey(e => new { e.FirstFriendId, e.SecondFriendId });
 
-            //builder.Entity<Friend>()
-            //    .HasOne(e => e.FirstFriend)
-            //    .WithMany(e => e.Friends)
-            //    .HasForeignKey(e => e.FirstFriendId);
+            builder.Entity<Friend>()
+                .HasOne(e => e.FirstFriend)
+                .WithMany(e => e.Friends)
+                //.HasForeignKey(e => e.FirstFriendId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            //builder.Entity<Friend>()
-            //        .HasOne(e => e.SecondFriend)
-            //    .WithMany(e => e.OherFriends)
-            //    .HasForeignKey(e => e.SecondFriendId);
+            builder.Entity<Friend>()
+                .HasOne(e => e.SecondFriend)
+                .WithMany(e => e.OherFriends)
+                //.HasForeignKey(e => e.SecondFriendId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             base.OnModelCreating(builder);
         }
