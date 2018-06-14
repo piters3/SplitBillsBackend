@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using SplitBillsBackend.Entities;
 using SplitBillsBackend.Models;
-using System.Collections.Generic;
 
 namespace SplitBillsBackend.Mappings
 {
@@ -12,8 +12,11 @@ namespace SplitBillsBackend.Mappings
             CreateMap<RegisterModel, User>();
             CreateMap<Category, CategoryModel>();
               //.ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id)); //gdyby były inne nazwy kluczy głównych
-
             CreateMap<Subcategory, SubcategoryModel>();
+            CreateMap<Bill, BillModel>();
+            CreateMap<Friend, FriendModel>();
+            CreateMap<IdentityRole, RoleModel>();
+            CreateMap<User, UserModel>();
         }
     }
 }

@@ -21,7 +21,6 @@ using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
 using Newtonsoft.Json;
-using SplitCategorysBackend.Data;
 
 namespace SplitBillsBackend
 {
@@ -58,6 +57,7 @@ namespace SplitBillsBackend
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddTransient<IBillsRepository, BillsRepository>();
             services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
+            services.TryAddTransient<IUsersRepository, UsersRepository>();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 

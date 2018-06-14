@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
 {
-    public class CategoriesRepository : ICategoriesRepository, IDisposable
+    public class UsersRepository : IUsersRepository, IDisposable
     {
         private SplitBillsDbContext _ctx;
 
-        public CategoriesRepository(SplitBillsDbContext ctx)
+        public UsersRepository(SplitBillsDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -21,29 +20,31 @@ namespace SplitBillsBackend.Data
             _ctx.SaveChanges();
         }
 
-        public IEnumerable<Category> GetAll()
+        public IEnumerable<User> GetAll()
         {
-            return _ctx.Categories.Include(c => c.Subcategories).ToList();
+             _ctx.Bills.Include(bill => bill.UserBills).ThenInclude(user => user.User).Include(x => x.Subcategory).ToList();
+
+            return _ctx.Users.Include(u=>u.UserBills).ThenInclude(b => b.Bill).Include(u=>u.Friends).ToList();
         }
 
-        public Category Get(int id)
+        public User Get(string id)
         {
-            return _ctx.Categories.Include(c => c.Subcategories).Where(x => x.Id == id).FirstOrDefault();
+            return _ctx.Users.Where(x => x.Id == id).FirstOrDefault();
         }
 
-        public void Insert(Category entity)
+        public void Insert(User entity)
         {
-            _ctx.Categories.Add(entity);
+            _ctx.Users.Add(entity);
         }
 
-        public void Update(Category entity)
+        public void Update(User entity)
         {
             _ctx.Entry(entity).State = EntityState.Modified;
         }
 
-        public void Delete(Category entity)
+        public void Delete(User entity)
         {
-            _ctx.Categories.Remove(entity);
+            _ctx.Users.Remove(entity);
         }
 
         protected void Dispose(bool disposing)
