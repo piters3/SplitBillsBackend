@@ -28,7 +28,7 @@ namespace SplitCategorysBackend.Data
 
         public Category Get(int id)
         {
-            return _ctx.Categories.Find(id);
+            return _ctx.Categories.Include(c => c.Subcategories).Where(x => x.Id == id).FirstOrDefault();
         }
 
         public void Insert(Category entity)

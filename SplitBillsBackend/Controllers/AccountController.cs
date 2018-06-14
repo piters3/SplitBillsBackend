@@ -19,14 +19,12 @@ namespace SplitBillsBackend.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<User> _userManager;
-        private readonly IMapper _mapper;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
 
-        public AccountController(UserManager<User> userManager, IMapper mapper, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
         {
             _userManager = userManager;
-            _mapper = mapper;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
         }
@@ -42,7 +40,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = _mapper.Map<User>(model);
+            var user = Mapper.Map<User>(model);
 
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
 

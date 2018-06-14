@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
+using SplitBillsBackend.Models;
 
 namespace SplitBillsBackend.Controllers
 {
@@ -21,10 +23,11 @@ namespace SplitBillsBackend.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Category> Get()
+        public IEnumerable<CategoryModel> Get()
         {
-            var qwe = _repo.GetAll();
-            return _repo.GetAll();
+            var all = _repo.GetAll();
+            var model = Mapper.Map<IEnumerable<CategoryModel>>(all);
+            return (model);
         }
 
         [HttpGet("{id}")]
@@ -35,36 +38,45 @@ namespace SplitBillsBackend.Controllers
             {
                 return NotFound();
             }
-            return Ok(entity);
+            var model = Mapper.Map<CategoryModel>(entity);
+
+            return Ok(model);
         }
 
         [HttpPost]
-        public IActionResult Post(Category entity)
+        public IActionResult Post([FromBody]CategoryModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var entity = Mapper.Map<Category>(model);
             _repo.Insert(entity);
             _repo.Save();
             return Ok(entity);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Category entity)
+        public IActionResult Put(int id, [FromBody]CategoryModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (id != entity.Id)
+            if (id != model.Id)
             {
                 return BadRequest();
             }
-            if (_repo.Get(id) == null)
+
+            var entity = _repo.Get(id);
+            if (entity == null)
             {
                 return NotFound();
             }
+
+            Mapper.Map(model, entity);
+
             _repo.Update(entity);
             _repo.Save();
             return Ok(entity);
@@ -73,7 +85,7 @@ namespace SplitBillsBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Category entity = _repo.Get(id);
+            var entity = _repo.Get(id);
             if (entity == null)
             {
                 return NotFound();
