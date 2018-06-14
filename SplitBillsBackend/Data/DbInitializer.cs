@@ -89,9 +89,9 @@ namespace SplitBillsBackend.Data
             var pioter = new User
             {
                 Email = "pioter@example.com",
-                NormalizedEmail = "PIOTR@EXAMPLE.COM",
+                NormalizedEmail = "PIOTER@EXAMPLE.COM",
                 UserName = "pioter",
-                NormalizedUserName = "PIOTR",
+                NormalizedUserName = "PIOTER",
                 PhoneNumber = "517906254",
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
@@ -104,7 +104,7 @@ namespace SplitBillsBackend.Data
             if (!context.Users.Any(u => u.UserName == pioter.UserName))
             {
                 var password = new PasswordHasher<User>();
-                var hashed = password.HashPassword(pioter, "piotr");
+                var hashed = password.HashPassword(pioter, "pioter");
                 pioter.PasswordHash = hashed;
                 context.Users.Add(pioter);
             }
@@ -401,6 +401,9 @@ namespace SplitBillsBackend.Data
 
                 _mati.Friends.Add(new Friend { FirstFriend = _mati, SecondFriend = _piotrek });
                 _piotrek.Friends.Add(new Friend { FirstFriend = _piotrek, SecondFriend = _mati });
+
+                _pioter.Friends.Add(new Friend { FirstFriend = _pioter, SecondFriend = _admin });
+                _admin.Friends.Add(new Friend { FirstFriend = _admin, SecondFriend = _pioter });
             }
             context.SaveChanges();
         }

@@ -10,8 +10,8 @@ using SplitBillsBackend.Data;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    [Migration("20180614162628_dane")]
-    partial class dane
+    [Migration("20180614174929_friends")]
+    partial class friends
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

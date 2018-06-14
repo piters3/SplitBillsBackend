@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class dane : Migration
+    public partial class friends : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
