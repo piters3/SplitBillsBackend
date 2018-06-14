@@ -44,7 +44,7 @@ namespace SplitBillsBackend.Mappings
             CreateMap<Friend, FriendModel>()
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.SecondFriend.Email))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.SecondFriend.Name))
-                .ForMember(dest => dest.PhoneNumber, opt => opt.MapFrom(src => src.SecondFriend.PhoneNumber))
+                .ForMember(dest => dest.SurName, opt => opt.MapFrom(src => src.SecondFriend.Name))
                 .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.SecondFriend.UserName));
 
             CreateMap<UserRole, RoleModel>()

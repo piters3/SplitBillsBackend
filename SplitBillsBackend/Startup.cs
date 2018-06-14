@@ -58,6 +58,8 @@ namespace SplitBillsBackend
             services.TryAddTransient<IBillsRepository, BillsRepository>();
             services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
             services.TryAddTransient<IUsersRepository, UsersRepository>();
+            services.TryAddTransient<IFriendsRepository, FriendsRepository>();
+            services.TryAddTransient<IAccountRepository, AccountRepository>();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 

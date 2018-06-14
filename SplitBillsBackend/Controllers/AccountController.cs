@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SplitBillsBackend.Auth;
+using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
 using SplitBillsBackend.Helpers;
 using SplitBillsBackend.Mappings;
@@ -21,12 +23,14 @@ namespace SplitBillsBackend.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
+        private IAccountRepository _repo;
 
-        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions)
+        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IAccountRepository repo)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
+            _repo = repo;
         }
 
 
@@ -87,6 +91,18 @@ namespace SplitBillsBackend.Controllers
             }
 
             return await Task.FromResult<ClaimsIdentity>(null);
+        }
+
+
+        // GET /api/Account/Friends
+        [HttpGet("Friends")]
+        [Authorize]
+        public IEnumerable<FriendModel> Friends()
+        {
+            var id = User.Claims.Single(c => c.Type == "id").Value;
+            var all = _repo.GetUserFriends(id);
+            var model = Mapper.Map<IEnumerable<FriendModel>>(all);
+            return model;
         }
 
     }

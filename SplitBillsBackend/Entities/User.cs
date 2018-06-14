@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace SplitBillsBackend.Entities
@@ -23,6 +24,12 @@ namespace SplitBillsBackend.Entities
         }
 
         public string Name { get; set; }
+        public string Surname { get; set; }
+        public bool Enabled { get; set; }
+        public DateTime RegisterDate { get; set; }
+        public decimal Balance { get; set; }
+        public decimal Owed { get; set; }
+        public decimal TheyOwed { get; set; }
 
         public virtual List<UserBill> UserBills { get; set; }
         public virtual List<Friend> Friends { get; set; }

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class users : Migration
+    public partial class dane : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -69,7 +69,13 @@ namespace SplitBillsBackend.Migrations
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    Surname = table.Column<string>(nullable: true),
+                    Enabled = table.Column<bool>(nullable: false),
+                    RegisterDate = table.Column<DateTime>(nullable: false),
+                    Balance = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
+                    Owed = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
+                    TheyOwed = table.Column<decimal>(type: "decimal(7, 2)", nullable: false)
                 },
                 constraints: table =>
                 {
