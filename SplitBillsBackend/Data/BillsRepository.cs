@@ -22,12 +22,24 @@ namespace SplitBillsBackend.Data
 
         public IEnumerable<Bill> GetAll()
         {
-            return _ctx.Bills.Include(bill => bill.UserBills).ThenInclude(user => user.User).Include(x=>x.Subcategory).ToList();
+            return _ctx.Bills
+                .Include(bill => bill.UserBills)
+                    .ThenInclude(user => user.User)
+                 .Include(x => x.Subcategory)
+                    .ThenInclude(s => s.Category)
+                    .Include(b=>b.UserBills)
+                .ToList();
         }
 
         public Bill Get(int id)
         {
-            return _ctx.Bills.Include(bill => bill.UserBills).ThenInclude(user => user.User).Include(x => x.Subcategory).Where(x => x.Id == id).FirstOrDefault();
+            return _ctx.Bills
+                .Include(bill => bill.UserBills)
+                    .ThenInclude(user => user.User)
+                .Include(x => x.Subcategory)
+                    .ThenInclude(s=>s.Category)
+                .Where(x => x.Id == id)
+                .FirstOrDefault();
         }
 
         public void Insert(Bill entity)

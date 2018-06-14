@@ -11,6 +11,6 @@ namespace SplitBillsBackend.Models
         public string PhoneNumber { get; set; }
         public List<FriendModel> Friends { get; set; }
         public List<RoleModel> Roles { get; set; }
-        public List<BillModel> Bills { get; set; }
+        public List<UserBillModel> Bills { get; set; }
     }
 }

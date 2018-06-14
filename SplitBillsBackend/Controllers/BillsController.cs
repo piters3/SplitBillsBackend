@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
+using SplitBillsBackend.Models;
 
 namespace SplitBillsBackend.Controllers
 {
@@ -21,9 +23,11 @@ namespace SplitBillsBackend.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Bill> Get()
+        public IEnumerable<BillModel> Get()
         {
-            return _repo.GetAll();
+            var all = _repo.GetAll();
+            var model = Mapper.Map<IEnumerable<BillModel>>(all);
+            return model;
         }
 
         [HttpGet("{id}")]

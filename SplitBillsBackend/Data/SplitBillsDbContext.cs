@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SplitBillsBackend.Entities;
 using System.Linq;
 
 namespace SplitBillsBackend.Data
 {
-    public class SplitBillsDbContext : IdentityDbContext<User>
+    public class SplitBillsDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>,
+        UserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
         public SplitBillsDbContext(DbContextOptions options)
             : base(options)
@@ -20,10 +22,60 @@ namespace SplitBillsBackend.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            base.OnModelCreating(builder);
+
             builder.Entity<Bill>().ToTable("Bills");
             builder.Entity<Category>().ToTable("Categories");
             builder.Entity<Subcategory>().ToTable("Subcategories");
             builder.Entity<Friend>().ToTable("Friends");
+
+
+            builder.Entity<User>(b =>
+            {
+                b.ToTable("Users");
+                b.HasMany(u => u.UserRoles)
+                 .WithOne(ur => ur.User)
+                 .HasForeignKey(ur => ur.UserId)
+                 .IsRequired();
+            });
+
+            builder.Entity<Role>(role =>
+            {
+                role.ToTable("Roles");
+                role.HasKey(r => r.Id);
+                role.HasIndex(r => r.NormalizedName).HasName("RoleNameIndex").IsUnique();
+                role.Property(r => r.ConcurrencyStamp).IsConcurrencyToken();
+
+                role.Property(u => u.Name).HasMaxLength(256);
+                role.Property(u => u.NormalizedName).HasMaxLength(256);
+
+                role.HasMany<UserRole>()
+                    .WithOne(ur => ur.Role)
+                    .HasForeignKey(ur => ur.RoleId)
+                    .IsRequired();
+                role.HasMany<IdentityRoleClaim<string>>()
+                    .WithOne()
+                    .HasForeignKey(rc => rc.RoleId)
+                    .IsRequired();
+            });
+
+            builder.Entity<IdentityRoleClaim<int>>(roleClaim =>
+            {
+                roleClaim.HasKey(rc => rc.Id);
+                roleClaim.ToTable("RoleClaims");
+            });
+
+            builder.Entity<UserRole>(userRole =>
+            {
+                userRole.ToTable("UserRoles");
+                userRole.HasKey(r => new { r.UserId, r.RoleId });
+            });
+
+            builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+
 
             builder.Entity<UserBill>()
                 .HasKey(ub => new { ub.UserId, ub.BillId });
@@ -43,15 +95,6 @@ namespace SplitBillsBackend.Data
                 property.Relational().ColumnType = "decimal(7, 2)";
             }
 
-            //builder.Entity<User>()
-            //    .HasMany(oj => oj.Friends)
-            //    .WithOne(j => j.Parent)
-            //    .HasForeignKey(j => j.JobId);
-
-
-            //builder.Entity<Friend>()
-            //    .HasKey(e => new { e.FirstFriendId, e.SecondFriendId });
-
             builder.Entity<Friend>()
                 .HasOne(e => e.FirstFriend)
                 .WithMany(e => e.Friends)
@@ -59,13 +102,16 @@ namespace SplitBillsBackend.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<Friend>()
-                .HasOne(e => e.SecondFriend)
-                .WithMany(e => e.OherFriends)
-                //.HasForeignKey(e => e.SecondFriendId)
-                .OnDelete(DeleteBehavior.Restrict);
+            .HasOne(e => e.SecondFriend)
+            .WithMany(e => e.OtherFriends)
+            //.HasForeignKey(e => e.SecondFriendId)
+            .OnDelete(DeleteBehavior.Restrict);
 
 
-            base.OnModelCreating(builder);
+
+
+
+         
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

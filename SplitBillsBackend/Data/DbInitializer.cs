@@ -19,8 +19,8 @@ namespace SplitBillsBackend.Data
 
         private static void AddUsersAndRoles(SplitBillsDbContext context)
         {
-            var adminRole = new IdentityRole { Name = "admin", NormalizedName = "ADMIN" };
-            var userRole = new IdentityRole { Name = "user", NormalizedName = "USER" };
+            var adminRole = new Role { Name = "admin", NormalizedName = "ADMIN" };
+            var userRole = new Role { Name = "user", NormalizedName = "USER" };
 
             if (!context.Roles.Any(r => r.Name == adminRole.Name))
             {
@@ -73,14 +73,14 @@ namespace SplitBillsBackend.Data
             }
             context.SaveChanges();
 
-            var adminUserRole = new IdentityUserRole<string>
+            var adminUserRole = new UserRole
             {
                 UserId = context.Users.Single(r => r.UserName == admin.UserName).Id,
                 RoleId = context.Roles.Single(r => r.Name == adminRole.Name).Id
             };
             context.UserRoles.Add(adminUserRole);
 
-            var userUserRole = new IdentityUserRole<string>
+            var userUserRole = new UserRole
             {
                 UserId = context.Users.Single(r => r.UserName == user.UserName).Id,
                 RoleId = context.Roles.Single(r => r.Name == userRole.Name).Id

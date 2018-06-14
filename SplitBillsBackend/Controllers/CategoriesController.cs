@@ -23,7 +23,7 @@ namespace SplitBillsBackend.Controllers
         {
             var all = _repo.GetAll();
             var model = Mapper.Map<IEnumerable<CategoryModel>>(all);
-            return (model);
+            return model;
         }
 
         [HttpGet("{id}")]

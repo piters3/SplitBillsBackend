@@ -16,8 +16,6 @@ namespace SplitBillsBackend.Entities
         public DateTime Date { get; set; }
         public string Notes { get; set; }
 
-        //public virtual List<User> Users { get; set; }
-
         public virtual List<UserBill> UserBills { get; set; }
         public virtual Subcategory Subcategory { get; set; }
     }
