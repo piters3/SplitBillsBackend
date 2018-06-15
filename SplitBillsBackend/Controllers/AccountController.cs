@@ -23,7 +23,7 @@ namespace SplitBillsBackend.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
-        private IAccountRepository _repo;
+        private readonly IAccountRepository _repo;
 
         public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IAccountRepository repo)
         {
@@ -105,15 +105,24 @@ namespace SplitBillsBackend.Controllers
             return model;
         }
 
+
         // GET /api/Account/Friends
         [HttpGet("Expenses")]
-        [Authorize]
-        public IEnumerable<BillModel> Expenses()
+        //[Authorize]
+        public IActionResult Expenses()
         {
-            var id = User.Claims.Single(c => c.Type == "id").Value;
+            //var id = User.Claims.Single(c => c.Type == "id").Value;
+            var id = "b5aa9218-5146-4d20-a5f9-5ac18cb84da0";
             var all = _repo.GetUserExpenses(id);
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
-            return model;
+
+            var expensesSumary = model.SelectMany(bill => bill.Payers).Sum(payer => payer.Amount);
+
+            return new OkObjectResult(new
+            {
+                model,
+                ExpensesSumary = expensesSumary   
+            });
         }
 
     }

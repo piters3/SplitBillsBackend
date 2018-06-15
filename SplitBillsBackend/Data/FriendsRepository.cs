@@ -6,7 +6,7 @@ using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
 {
-    public class FriendsRepository : IFriendsRepository, IDisposable
+    public class FriendsRepository : IFriendsRepository
     {
         private SplitBillsDbContext _ctx;
 
@@ -29,8 +29,7 @@ namespace SplitBillsBackend.Data
         public Friend Get(int id)
         {
             return _ctx.Friends
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public void Insert(Friend entity)

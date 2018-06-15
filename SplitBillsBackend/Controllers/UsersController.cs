@@ -11,7 +11,7 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private IUsersRepository _repo;
+        private readonly IUsersRepository _repo;
 
         public UsersController(IUsersRepository repo)
         {

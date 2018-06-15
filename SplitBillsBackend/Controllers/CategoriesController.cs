@@ -11,7 +11,7 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class CategoriesController : Controller
     {
-        private ICategoriesRepository _repo;
+        private readonly ICategoriesRepository _repo;
 
         public CategoriesController(ICategoriesRepository repo)
         {

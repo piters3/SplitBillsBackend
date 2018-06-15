@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
@@ -15,7 +11,7 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class BillsController : Controller
     {
-        private IBillsRepository _repo;
+        private readonly IBillsRepository _repo;
 
         public BillsController(IBillsRepository repo)
         {

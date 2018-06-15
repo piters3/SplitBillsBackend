@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
@@ -28,7 +27,7 @@ namespace SplitBillsBackend.Data
 
         public Category Get(int id)
         {
-            return _ctx.Categories.Include(c => c.Subcategories).Where(x => x.Id == id).FirstOrDefault();
+            return _ctx.Categories.Include(c => c.Subcategories).FirstOrDefault(x => x.Id == id);
         }
 
         public void Insert(Category entity)

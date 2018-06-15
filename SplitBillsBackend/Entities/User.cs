@@ -21,6 +21,7 @@ namespace SplitBillsBackend.Entities
             Friends = new List<Friend>();
             OtherFriends = new List<Friend>();
             UserRoles = new List<UserRole>();
+            Bills = new List<Bill>();
         }
 
         public string Name { get; set; }
@@ -31,6 +32,7 @@ namespace SplitBillsBackend.Entities
         public decimal Owed { get; set; }
         public decimal TheyOwed { get; set; }
 
+        public virtual List<Bill> Bills { get; set; }
         public virtual List<UserBill> UserBills { get; set; }
         public virtual List<Friend> Friends { get; set; }
         public virtual List<Friend> OtherFriends { get; set; }

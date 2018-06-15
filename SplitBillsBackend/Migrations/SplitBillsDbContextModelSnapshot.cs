@@ -342,7 +342,7 @@ namespace SplitBillsBackend.Migrations
             modelBuilder.Entity("SplitBillsBackend.Entities.Bill", b =>
                 {
                     b.HasOne("SplitBillsBackend.Entities.User", "Creator")
-                        .WithMany()
+                        .WithMany("Bills")
                         .HasForeignKey("CreatorId");
 
                     b.HasOne("SplitBillsBackend.Entities.Subcategory", "Subcategory")

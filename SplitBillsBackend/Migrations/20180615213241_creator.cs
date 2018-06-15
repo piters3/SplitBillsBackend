@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class lec : Migration
+    public partial class creator : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
@@ -13,7 +11,7 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class FriendsController : Controller
     {
-        private IFriendsRepository _repo;
+        private readonly IFriendsRepository _repo;
 
         public FriendsController(IFriendsRepository repo)
         {

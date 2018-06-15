@@ -10,8 +10,8 @@ using SplitBillsBackend.Data;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    [Migration("20180615170219_lec")]
-    partial class lec
+    [Migration("20180615213241_creator")]
+    partial class creator
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -344,7 +344,7 @@ namespace SplitBillsBackend.Migrations
             modelBuilder.Entity("SplitBillsBackend.Entities.Bill", b =>
                 {
                     b.HasOne("SplitBillsBackend.Entities.User", "Creator")
-                        .WithMany()
+                        .WithMany("Bills")
                         .HasForeignKey("CreatorId");
 
                     b.HasOne("SplitBillsBackend.Entities.Subcategory", "Subcategory")

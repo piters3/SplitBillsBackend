@@ -6,7 +6,7 @@ using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
 {
-    public class AccountRepository : IAccountRepository, IDisposable
+    public class AccountRepository : IAccountRepository
     {
         private SplitBillsDbContext _ctx;
 

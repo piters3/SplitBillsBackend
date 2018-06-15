@@ -6,7 +6,7 @@ using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
 {
-    public class UsersRepository : IUsersRepository, IDisposable
+    public class UsersRepository : IUsersRepository
     {
         private SplitBillsDbContext _ctx;
 
@@ -42,8 +42,7 @@ namespace SplitBillsBackend.Data
                      .ThenInclude(s => s.Category)
                  .Include(u => u.Friends)
                  .Include(u => u.UserRoles)
-                     .ThenInclude(r => r.Role)
-                 .Where(x => x.Id == id).FirstOrDefault();
+                    .ThenInclude(r => r.Role).FirstOrDefault(x => x.Id == id);
         }
 
         public void Insert(User entity)
