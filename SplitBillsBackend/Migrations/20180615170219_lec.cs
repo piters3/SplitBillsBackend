@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class friends : Migration
+    public partial class lec : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -244,11 +244,18 @@ namespace SplitBillsBackend.Migrations
                     TotalAmount = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
                     Date = table.Column<DateTime>(nullable: false),
                     Notes = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<string>(nullable: true),
                     SubcategoryId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Bills", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Bills_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Bills_Subcategories_SubcategoryId",
                         column: x => x.SubcategoryId,
@@ -286,6 +293,11 @@ namespace SplitBillsBackend.Migrations
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bills_CreatorId",
+                table: "Bills",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bills_SubcategoryId",

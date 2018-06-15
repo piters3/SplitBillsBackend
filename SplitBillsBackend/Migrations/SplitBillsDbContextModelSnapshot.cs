@@ -115,6 +115,8 @@ namespace SplitBillsBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("CreatorId");
+
                     b.Property<DateTime>("Date");
 
                     b.Property<string>("Description");
@@ -127,6 +129,8 @@ namespace SplitBillsBackend.Migrations
                         .HasColumnType("decimal(7, 2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
 
                     b.HasIndex("SubcategoryId");
 
@@ -337,6 +341,10 @@ namespace SplitBillsBackend.Migrations
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Bill", b =>
                 {
+                    b.HasOne("SplitBillsBackend.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
+
                     b.HasOne("SplitBillsBackend.Entities.Subcategory", "Subcategory")
                         .WithMany("Bills")
                         .HasForeignKey("SubcategoryId");
