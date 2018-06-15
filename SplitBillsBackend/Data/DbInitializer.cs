@@ -353,10 +353,10 @@ namespace SplitBillsBackend.Data
 
             var bills = new List<Bill>
             {
-                new Bill{ TotalAmount = 2.60m, Date = new DateTime(2018, 6, 1, 12, 23, 4), Description = "Bułki", Notes = "Dobry były", Subcategory = jedzenie[1] },
-                new Bill{ TotalAmount = 46.29m, Date = new DateTime(2018, 4, 01, 12, 33, 14), Description = "Jägermeister", Notes = "Na melanż", Subcategory = jedzenie[2] },
-                new Bill{ TotalAmount = 23.76m, Date = new DateTime(2018, 6, 11, 10, 3, 49), Description = "Kino", Notes = "Kino notatki", Subcategory = rozrywka[1] },
-                new Bill{ TotalAmount = 1500.00m, Date = new DateTime(2018, 5, 9, 10, 30, 0), Description = "Czynsz maj", Notes = "Brak", Subcategory = dom[6] }
+                new Bill{ Creator = _pioter, TotalAmount = 2.60m, Date = new DateTime(2018, 6, 1, 12, 23, 4), Description = "Bułki", Notes = "Dobry były", Subcategory = jedzenie[1] },
+                new Bill{ Creator = _pioter, TotalAmount = 46.29m, Date = new DateTime(2018, 4, 01, 12, 33, 14), Description = "Jägermeister", Notes = "Na melanż", Subcategory = jedzenie[2] },
+                new Bill{ Creator = _mati, TotalAmount = 23.76m, Date = new DateTime(2018, 6, 11, 10, 3, 49), Description = "Kino", Notes = "Kino notatki", Subcategory = rozrywka[1] },
+                new Bill{ Creator = _piotrek, TotalAmount = 1500.00m, Date = new DateTime(2018, 5, 9, 10, 30, 0), Description = "Czynsz maj", Notes = "Brak", Subcategory = dom[6] }
             };
 
             foreach (var b in bills)
@@ -373,7 +373,7 @@ namespace SplitBillsBackend.Data
                 new UserBill{ Bill = bills[0], User = _pioter, Amount = 1.30m },
                 new UserBill{ Bill = bills[0], User = _mati, Amount = 1.30m },
                 new UserBill{ Bill = bills[1], User = _pioter, Amount = bills[1].TotalAmount },
-                new UserBill{ Bill = bills[2], User = _mati, Amount = 23.76m },
+                new UserBill{ Bill = bills[2], User = _mati, Amount = bills[2].TotalAmount },
                 new UserBill{ Bill = bills[3], User = _mati, Amount =  500.00m },
                 new UserBill{ Bill = bills[3], User = _pioter, Amount = 500.00m },
                 new UserBill{ Bill = bills[3], User = _piotrek, Amount = 500.00m },

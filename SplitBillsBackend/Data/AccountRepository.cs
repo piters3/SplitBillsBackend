@@ -24,11 +24,19 @@ namespace SplitBillsBackend.Data
         {
             return _ctx.Friends
                 .Include(f => f.FirstFriend)
-                .Include(f=>f.SecondFriend)
+                .Include(f => f.SecondFriend)
                 .Where(f => f.FirstFriend.Id == id)
                 .ToList();
         }
 
+        public IEnumerable<Bill> GetUserExpenses(string id)
+        {
+            return _ctx.Bills
+                .Include(b => b.Subcategory).ThenInclude(s => s.Category)
+                .Include(b => b.UserBills).ThenInclude(user => user.User)
+                .Where(b => b.UserBills.Any(c => c.User.Id == id))
+                .ToList();
+        }
 
         protected void Dispose(bool disposing)
         {

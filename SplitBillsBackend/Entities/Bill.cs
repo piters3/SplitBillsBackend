@@ -15,6 +15,7 @@ namespace SplitBillsBackend.Entities
         public decimal TotalAmount { get; set; }
         public DateTime Date { get; set; }
         public string Notes { get; set; }
+        public User Creator { get; set; }
 
         public virtual List<UserBill> UserBills { get; set; }
         public virtual Subcategory Subcategory { get; set; }

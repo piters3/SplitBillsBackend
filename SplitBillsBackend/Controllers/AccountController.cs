@@ -105,5 +105,16 @@ namespace SplitBillsBackend.Controllers
             return model;
         }
 
+        // GET /api/Account/Friends
+        [HttpGet("Expenses")]
+        [Authorize]
+        public IEnumerable<BillModel> Expenses()
+        {
+            var id = User.Claims.Single(c => c.Type == "id").Value;
+            var all = _repo.GetUserExpenses(id);
+            var model = Mapper.Map<IEnumerable<BillModel>>(all);
+            return model;
+        }
+
     }
 }
