@@ -7,7 +7,7 @@ namespace SplitBillsBackend.Data
     public interface IUsersRepository : IDisposable
     {
         IEnumerable<User> GetAll();
-        User Get(string id);
+        User Get(int id);
         void Insert(User entity);
         void Delete(User entity);
         void Update(User entity);

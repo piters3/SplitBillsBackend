@@ -20,7 +20,7 @@ namespace SplitBillsBackend.Data
             _ctx.SaveChanges();
         }
 
-        public IEnumerable<Friend> GetUserFriends(string id)
+        public IEnumerable<Friend> GetUserFriends(int id)
         {
             return _ctx.Friends
                 .Include(f => f.FirstFriend)
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Data
                 .ToList();
         }
 
-        public IEnumerable<Bill> GetUserExpenses(string id)
+        public IEnumerable<Bill> GetUserExpenses(int id)
         {
             return _ctx.Bills
                 .Include(b => b.Subcategory).ThenInclude(s => s.Category)

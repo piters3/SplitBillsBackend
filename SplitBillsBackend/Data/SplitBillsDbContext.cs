@@ -6,8 +6,9 @@ using System.Linq;
 
 namespace SplitBillsBackend.Data
 {
-    public class SplitBillsDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>,
-        UserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
+    public class SplitBillsDbContext : IdentityDbContext<User, Role, int, IdentityUserClaim<int>,
+        UserRole, IdentityUserLogin<int>,
+        IdentityRoleClaim<int>, IdentityUserToken<int>>
     {
         public SplitBillsDbContext(DbContextOptions options)
             : base(options)
@@ -53,7 +54,7 @@ namespace SplitBillsBackend.Data
                     .WithOne(ur => ur.Role)
                     .HasForeignKey(ur => ur.RoleId)
                     .IsRequired();
-                role.HasMany<IdentityRoleClaim<string>>()
+                role.HasMany<IdentityRoleClaim<int>>()
                     .WithOne()
                     .HasForeignKey(rc => rc.RoleId)
                     .IsRequired();
@@ -71,9 +72,9 @@ namespace SplitBillsBackend.Data
                 userRole.HasKey(r => new { r.UserId, r.RoleId });
             });
 
-            builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
-            builder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
-            builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+            builder.Entity<IdentityUserLogin<int>>().ToTable("UserLogins");
+            builder.Entity<IdentityUserClaim<int>>().ToTable("UserClaims");
+            builder.Entity<IdentityUserToken<int>>().ToTable("UserTokens");
 
 
 

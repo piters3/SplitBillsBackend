@@ -33,7 +33,7 @@ namespace SplitBillsBackend.Data
                 .ToList();
         }
 
-        public User Get(string id)
+        public User Get(int id)
         {
             return _ctx.Users
                  .Include(u => u.UserBills)

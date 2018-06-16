@@ -27,7 +27,7 @@ namespace SplitBillsBackend.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(string id)
+        public IActionResult Get(int id)
         {
             var entity = _repo.Get(id);
             if (entity == null)
@@ -54,7 +54,7 @@ namespace SplitBillsBackend.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(string id, [FromBody]UserModel model)
+        public IActionResult Put(int id, [FromBody]UserModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -79,7 +79,7 @@ namespace SplitBillsBackend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id)
+        public IActionResult Delete(int id)
         {
             var entity = _repo.Get(id);
             if (entity == null)

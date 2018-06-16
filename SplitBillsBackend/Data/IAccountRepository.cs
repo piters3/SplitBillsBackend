@@ -6,8 +6,8 @@ namespace SplitBillsBackend.Data
 {
     public interface IAccountRepository : IDisposable
     {
-        IEnumerable<Friend> GetUserFriends(string id);
-        IEnumerable<Bill> GetUserExpenses(string id);
+        IEnumerable<Friend> GetUserFriends(int id);
+        IEnumerable<Bill> GetUserExpenses(int id);
         void Save();
     }
 }

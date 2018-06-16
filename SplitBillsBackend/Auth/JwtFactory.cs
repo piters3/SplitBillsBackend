@@ -47,7 +47,7 @@ namespace SplitBillsBackend.Auth
         {
             return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[]
             {
-                new Claim(Helpers.Constants.JwtClaimIdentifiers.Id, id),
+                new Claim(Helpers.Constants.JwtClaimIdentifiers.Id, id, ClaimValueTypes.Integer),
                 new Claim(Helpers.Constants.JwtClaimIdentifiers.Rol, Helpers.Constants.JwtClaims.ApiAccess)
             });
         }

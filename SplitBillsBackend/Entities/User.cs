@@ -4,16 +4,16 @@ using System.Collections.Generic;
 
 namespace SplitBillsBackend.Entities
 {
-    public partial class Role : IdentityRole<string>
+    public partial class Role : IdentityRole<int>
     { }
 
-    public partial class UserRole : IdentityUserRole<string>
+    public partial class UserRole : IdentityUserRole<int>
     {
         public virtual User User { get; set; }
         public virtual Role Role { get; set; }
     }
 
-    public class User : IdentityUser<string>
+    public class User : IdentityUser<int>
     {
         public User()
         {

@@ -133,8 +133,12 @@ namespace SplitBillsBackend
                 o.Password.RequireNonAlphanumeric = false;
                 o.Password.RequiredLength = 3;
             });
-            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+            builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<SplitBillsDbContext>().AddDefaultTokenProviders();
+
+            //services.AddIdentity<User, Role>()
+            //    .AddEntityFrameworkStores<SplitBillsDbContext>()
+            //    .AddDefaultTokenProviders();
 
             services.AddAutoMapper();
 
