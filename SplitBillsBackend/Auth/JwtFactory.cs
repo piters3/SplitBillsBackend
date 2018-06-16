@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using SplitBillsBackend.Helpers;
 using SplitBillsBackend.Mappings;
 
 namespace SplitBillsBackend.Auth
@@ -25,11 +26,10 @@ namespace SplitBillsBackend.Auth
                  new Claim(JwtRegisteredClaimNames.Sub, userName),
                  new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                  new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
-                 identity.FindFirst(Helpers.Constants.JwtClaimIdentifiers.Rol),
-                 identity.FindFirst(Helpers.Constants.JwtClaimIdentifiers.Id)
+                 identity.FindFirst(Constants.JwtClaimIdentifiers.Id),
+                 identity.FindFirst(ClaimTypes.Role)
              };
 
-            // Create the JWT security token and encode it.
             var jwt = new JwtSecurityToken(
                 issuer: _jwtOptions.Issuer,
                 audience: _jwtOptions.Audience,
@@ -43,12 +43,12 @@ namespace SplitBillsBackend.Auth
             return encodedJwt;
         }
 
-        public ClaimsIdentity GenerateClaimsIdentity(string userName, string id)
+        public ClaimsIdentity GenerateClaimsIdentity(string userName, string id, string role)
         {
             return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[]
             {
-                new Claim(Helpers.Constants.JwtClaimIdentifiers.Id, id, ClaimValueTypes.Integer),
-                new Claim(Helpers.Constants.JwtClaimIdentifiers.Rol, Helpers.Constants.JwtClaims.ApiAccess)
+                new Claim(Constants.JwtClaimIdentifiers.Id, id, ClaimValueTypes.Integer),
+                new Claim(ClaimTypes.Role, role)
             });
         }
 

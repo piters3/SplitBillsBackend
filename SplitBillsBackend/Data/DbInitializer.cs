@@ -172,13 +172,6 @@ namespace SplitBillsBackend.Data
             };
             context.UserRoles.Add(userUserRole);
 
-            var pioterUserRole = new UserRole
-            {
-                UserId = context.Users.Single(r => r.UserName == pioter.UserName).Id,
-                RoleId = context.Roles.Single(r => r.Name == userRole.Name).Id
-            };
-            context.UserRoles.Add(pioterUserRole);
-
             var pioterAdminRole = new UserRole
             {
                 UserId = context.Users.Single(r => r.UserName == pioter.UserName).Id,

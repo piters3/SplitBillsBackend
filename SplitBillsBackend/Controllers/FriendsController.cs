@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
@@ -7,7 +8,7 @@ using SplitBillsBackend.Models;
 
 namespace SplitBillsBackend.Controllers
 {
-    //[Authorize]
+    [Authorize(Policy = "Admin")]
     [Route("api/[controller]")]
     public class FriendsController : Controller
     {
@@ -21,7 +22,6 @@ namespace SplitBillsBackend.Controllers
         [HttpGet]
         public IEnumerable<FriendModel> Get()
         {
-            //var id = User.Claims.Single(c => c.Type == "id");
             var all = _repo.GetAll();
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;

@@ -14,10 +14,10 @@ using Microsoft.IdentityModel.Tokens;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
 using SplitBillsBackend.Mappings;
-using SplitBillsBackend.Helpers;
 using Swashbuckle.AspNetCore.Swagger;
 using SplitBillsBackend.Auth;
 using System.Net;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
 using Newtonsoft.Json;
@@ -100,7 +100,7 @@ namespace SplitBillsBackend
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApiUser", policy => policy.RequireClaim(Constants.JwtClaimIdentifiers.Rol, Constants.JwtClaims.ApiAccess));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
             });
 
             services.AddSwaggerGen(c =>
@@ -136,19 +136,16 @@ namespace SplitBillsBackend
             builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
             builder.AddEntityFrameworkStores<SplitBillsDbContext>().AddDefaultTokenProviders();
 
-            //services.AddIdentity<User, Role>()
-            //    .AddEntityFrameworkStores<SplitBillsDbContext>()
-            //    .AddDefaultTokenProviders();
-
             services.AddAutoMapper();
 
             services.AddCors();
             services.AddMvc()
-            .AddJsonOptions(options =>
+                .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver
                         = new Newtonsoft.Json.Serialization.DefaultContractResolver();
-                }).AddJsonOptions(options =>
+                })
+                .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });

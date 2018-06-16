@@ -18,6 +18,7 @@ using SplitBillsBackend.Models;
 
 namespace SplitBillsBackend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
@@ -59,6 +60,7 @@ namespace SplitBillsBackend.Controllers
 
 
         // POST /api/Account/login
+        [AllowAnonymous]
         [HttpPost("Login")]
         public async Task<IActionResult> Post([FromBody]CredentialsModel credentials)
         {
@@ -83,12 +85,14 @@ namespace SplitBillsBackend.Controllers
                 return await Task.FromResult<ClaimsIdentity>(null);
 
             var userToVerify = await _userManager.FindByNameAsync(userName);
+            var roles = await _userManager.GetRolesAsync(userToVerify);
+
 
             if (userToVerify == null) return await Task.FromResult<ClaimsIdentity>(null);
 
             if (await _userManager.CheckPasswordAsync(userToVerify, password))
             {
-                return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userName, userToVerify.Id.ToString()));
+                return await Task.FromResult(_jwtFactory.GenerateClaimsIdentity(userName, userToVerify.Id.ToString(), roles[0]));
             }
 
             return await Task.FromResult<ClaimsIdentity>(null);
@@ -97,7 +101,6 @@ namespace SplitBillsBackend.Controllers
 
         // GET /api/Account/Friends
         [HttpGet("Friends")]
-        [Authorize]
         public IEnumerable<FriendModel> Friends()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == "id").Value);
@@ -109,10 +112,9 @@ namespace SplitBillsBackend.Controllers
 
         // GET /api/Account/Expenses
         [HttpGet("Expenses")]
-        [Authorize]
         public IActionResult Expenses()
         {
-            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == "id").Value);
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
             var all = _repo.GetUserExpenses(id);
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
 
