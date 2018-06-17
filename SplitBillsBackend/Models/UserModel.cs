@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SplitBillsBackend.Models
 {
@@ -9,6 +10,7 @@ namespace SplitBillsBackend.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
+        public DateTime RegisterDate { get; set; }
         public List<FriendModel> Friends { get; set; }
         public List<RoleModel> Roles { get; set; }
         public List<UserBillModel> Bills { get; set; }

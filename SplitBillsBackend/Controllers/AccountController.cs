@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -133,11 +134,11 @@ namespace SplitBillsBackend.Controllers
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
             var all = _repo.GetCommonExpenses(id, friendId);
-            var model = Mapper.Map<IEnumerable<BillModel>>(all);
+            var commonExpenses = Mapper.Map<IEnumerable<BillModel>>(all);
 
             var expensesSummary = 0.00m;
 
-            foreach (var bill in model)
+            foreach (var bill in commonExpenses)
             {
                 foreach (var payer in bill.Payers)
                 {
@@ -154,10 +155,82 @@ namespace SplitBillsBackend.Controllers
 
             return new OkObjectResult(new
             {
-                model,
+                CommonExpenses = commonExpenses,
                 ExpensesSummary = expensesSummary
             });
         }
 
+        // GET /api/Account/Dashboard
+        [HttpGet("Dashboard")]
+        public IActionResult Dashboard()
+        {
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+            var billsCreatedByUser = _repo.GetBillsCreatedByUser(id);
+            var billsInWhichUserIsPayer = _repo.GetBillsInWhichUserIsPayer(id);
+            var userBorrowers = new List<BorrowerModel>();
+            var userOwedTo = new List<BorrowerModel>();
+
+            foreach (var bill in billsInWhichUserIsPayer)
+            {
+                foreach (var item in bill.UserBills)
+                {
+                    if (item.User.Id == id && item.Settled == false)
+                    {
+                        var existed = userOwedTo.FirstOrDefault(x => x.Id == bill.Creator.Id);
+                        if (existed != null)
+                        {
+                            existed.Amount += item.Amount;
+                        }
+                        else
+                        {
+                            userOwedTo.Add(new BorrowerModel
+                            {
+                                Id = bill.Creator.Id,
+                                Name = bill.Creator.Name,
+                                SurName = bill.Creator.Surname,
+                                Amount = item.Amount
+                            });
+                        }
+                    }
+                }
+            }
+
+            foreach (var bill in billsCreatedByUser)
+            {
+                foreach (var item in bill.UserBills)
+                {
+                    if (item.User.Id != id && item.Settled == false)
+                    {
+                        var existed = userBorrowers.FirstOrDefault(x => x.Id == item.User.Id);
+                        if (existed != null)
+                        {
+                            existed.Amount += item.Amount;
+                        }
+                        else
+                        {
+                            userBorrowers.Add(new BorrowerModel
+                            {
+                                Id = item.User.Id,
+                                Name = item.User.Name,
+                                SurName = item.User.Surname,
+                                Amount = item.Amount
+                            });
+                        }
+                    }
+                }
+            }
+
+            var owedToUserSummary = userBorrowers.Select(x => x.Amount).Sum();
+            var userOwedSummary = userOwedTo.Select(x => x.Amount).Sum();
+
+            return new OkObjectResult(new
+            {
+                UserBorrowers = userBorrowers,
+                OwedToUserSummary = owedToUserSummary,
+                UserOwedTo = userOwedTo,
+                UserOwedSummary = userOwedSummary,
+                TotalBalance = owedToUserSummary - userOwedSummary
+            });
+        }
     }
 }

@@ -8,5 +8,6 @@
         public string SurName { get; set; }
         public string Email { get; set; }
         public decimal Amount { get; set; }
+        public bool Settled { get; set; }
     }
 }

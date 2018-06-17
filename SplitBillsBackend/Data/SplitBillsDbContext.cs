@@ -106,13 +106,7 @@ namespace SplitBillsBackend.Data
             .HasOne(e => e.SecondFriend)
             .WithMany(e => e.OtherFriends)
             //.HasForeignKey(e => e.SecondFriendId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-
-
-
-
-         
+            .OnDelete(DeleteBehavior.Restrict);        
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

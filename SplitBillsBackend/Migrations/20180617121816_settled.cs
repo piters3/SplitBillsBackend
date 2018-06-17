@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class test : Migration
+    public partial class settled : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -59,10 +59,7 @@ namespace SplitBillsBackend.Migrations
                     Name = table.Column<string>(nullable: true),
                     Surname = table.Column<string>(nullable: true),
                     Enabled = table.Column<bool>(nullable: false),
-                    RegisterDate = table.Column<DateTime>(nullable: false),
-                    Balance = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
-                    Owed = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
-                    TheyOwed = table.Column<decimal>(type: "decimal(7, 2)", nullable: false)
+                    RegisterDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,7 +254,8 @@ namespace SplitBillsBackend.Migrations
                 {
                     UserId = table.Column<int>(nullable: false),
                     BillId = table.Column<int>(nullable: false),
-                    Amount = table.Column<decimal>(type: "decimal(7, 2)", nullable: false)
+                    Amount = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
+                    Settled = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

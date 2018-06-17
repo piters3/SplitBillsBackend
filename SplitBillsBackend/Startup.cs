@@ -184,7 +184,7 @@ namespace SplitBillsBackend
                 c.RoutePrefix = string.Empty;
             });
 
-            //DbInitializer.Initialize(dbContext);
+            DbInitializer.Initialize(dbContext);
 
             app.UseAuthentication();
             app.UseDefaultFiles();

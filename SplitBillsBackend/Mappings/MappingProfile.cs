@@ -33,14 +33,14 @@ namespace SplitBillsBackend.Mappings
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Bill.Notes))
                 .ForMember(dest => dest.SubcategoryName, opt => opt.MapFrom(src => src.Bill.Subcategory.Name));
 
-            CreateMap<UserBill, UserBillModel>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Bill.Id))
-                .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Bill.Subcategory.Category.Name))
-                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Bill.Date))
-                .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Bill.Description))
-                .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Bill.Notes))
-                .ForMember(dest => dest.SubcategoryName, opt => opt.MapFrom(src => src.Bill.Subcategory.Name));
+            //CreateMap<UserBill, UserBillModel>()
+            //    .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Bill.Id))
+            //    .ForMember(dest => dest.Amount, opt => opt.MapFrom(src => src.Amount))
+            //    .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Bill.Subcategory.Category.Name))
+            //    .ForMember(dest => dest.Date, opt => opt.MapFrom(src => src.Bill.Date))
+            //    .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Bill.Description))
+            //    .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Bill.Notes))
+            //    .ForMember(dest => dest.SubcategoryName, opt => opt.MapFrom(src => src.Bill.Subcategory.Name));
 
             CreateMap<Friend, FriendModel>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.SecondFriend.Id))

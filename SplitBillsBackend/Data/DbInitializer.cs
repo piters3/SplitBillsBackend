@@ -17,11 +17,12 @@ namespace SplitBillsBackend.Data
 
         public static void Initialize(SplitBillsDbContext context)
         {
-            context.Database.EnsureCreated();
+            if (context.Database.EnsureCreated())
+            {
+                AddUsersAndRoles(context);
 
-            AddUsersAndRoles(context);
-
-            AddData(context);
+                AddData(context);
+            }     
         }
 
         private static void AddUsersAndRoles(SplitBillsDbContext context)
@@ -51,7 +52,8 @@ namespace SplitBillsBackend.Data
                 SecurityStamp = Guid.NewGuid().ToString("D"),
                 Name = "Admin",
                 Surname = "Adminowski",
-                Enabled = true
+                Enabled = true,
+                RegisterDate = new DateTime(2018, 6, 1, 12, 23, 4)
             };
 
             if (!context.Users.Any(u => u.UserName == admin.UserName))
@@ -74,7 +76,8 @@ namespace SplitBillsBackend.Data
                 SecurityStamp = Guid.NewGuid().ToString("D"),
                 Name = "User",
                 Surname = "Userowski",
-                Enabled = true
+                Enabled = true,
+                RegisterDate = new DateTime(2017, 5, 4, 10, 20, 0)
             };
 
             if (!context.Users.Any(u => u.UserName == user.UserName))
@@ -98,7 +101,8 @@ namespace SplitBillsBackend.Data
                 SecurityStamp = Guid.NewGuid().ToString("D"),
                 Name = "Piotr",
                 Surname = "Strzelecki",
-                Enabled = true
+                Enabled = true,
+                RegisterDate = new DateTime(2018, 1, 1, 1, 2, 1)
             };
 
             if (!context.Users.Any(u => u.UserName == pioter.UserName))
@@ -122,7 +126,8 @@ namespace SplitBillsBackend.Data
                 SecurityStamp = Guid.NewGuid().ToString("D"),
                 Name = "Mateusz",
                 Surname = "Szpinda",
-                Enabled = true
+                Enabled = true,
+                RegisterDate = new DateTime(2017, 12, 12, 12, 22, 20)
             };
 
             if (!context.Users.Any(u => u.UserName == mati.UserName))
@@ -146,7 +151,8 @@ namespace SplitBillsBackend.Data
                 SecurityStamp = Guid.NewGuid().ToString("D"),
                 Name = "Piotr",
                 Surname = "Sobiborowicz",
-                Enabled = true
+                Enabled = true,
+                RegisterDate = new DateTime(2017, 9, 4, 10, 14, 15)
             };
 
             if (!context.Users.Any(u => u.UserName == piotrek.UserName))
@@ -347,8 +353,8 @@ namespace SplitBillsBackend.Data
             var bills = new List<Bill>
             {
                 new Bill { Creator = _pioter, TotalAmount = 2.60m, Date = new DateTime(2018, 6, 1, 12, 23, 4), Description = "Bułki", Notes = "Dobry były", Subcategory = jedzenie[1] },
-                new Bill { Creator = _pioter, TotalAmount = 46.29m, Date = new DateTime(2018, 4, 01, 12, 33, 14), Description = "Jägermeister", Notes = "Na melanż", Subcategory = jedzenie[2] },
-                new Bill { Creator = _mati, TotalAmount = 23.76m, Date = new DateTime(2018, 6, 11, 10, 3, 49), Description = "Kino", Notes = "Kino notatki", Subcategory = rozrywka[1] },
+                new Bill { Creator = _pioter, TotalAmount = 92.56m, Date = new DateTime(2018, 4, 01, 12, 33, 14), Description = "Jägermeister", Notes = "Na melanż", Subcategory = jedzenie[2] },
+                new Bill { Creator = _mati, TotalAmount = 54.00m, Date = new DateTime(2018, 6, 11, 10, 3, 49), Description = "Kino", Notes = "Kino notatki", Subcategory = rozrywka[1] },
                 new Bill { Creator = _piotrek, TotalAmount = 1500.00m, Date = new DateTime(2018, 5, 9, 10, 30, 0), Description = "Czynsz maj", Notes = "Brak", Subcategory = dom[6] },
                 new Bill { Creator = _mati, TotalAmount = 50.00m, Date = new DateTime(2018, 5, 10, 11, 30, 0), Description = "Obiad", Notes = "Nie ma notatek", Subcategory = jedzenie[0] }
             };
@@ -366,11 +372,20 @@ namespace SplitBillsBackend.Data
             {
                 new UserBill { Bill = bills[0], User = _pioter, Amount = 1.30m },
                 new UserBill { Bill = bills[0], User = _mati, Amount = 1.30m },
-                new UserBill { Bill = bills[1], User = _pioter, Amount = bills[1].TotalAmount },
-                new UserBill { Bill = bills[2], User = _mati, Amount = bills[2].TotalAmount },
+
+                new UserBill { Bill = bills[1], User = _pioter, Amount = 23.14m },
+                new UserBill { Bill = bills[1], User = _mati, Amount = 23.14m },
+                new UserBill { Bill = bills[1], User = _piotrek, Amount = 23.14m },
+                new UserBill { Bill = bills[1], User = _user, Amount = 23.14m },
+
+                new UserBill { Bill = bills[2], User = _mati, Amount = 18.00m },
+                new UserBill { Bill = bills[2], User = _pioter, Amount = 18.00m },
+                new UserBill { Bill = bills[2], User = _user, Amount = 18.00m },
+
                 new UserBill { Bill = bills[3], User = _mati, Amount =  500.00m },
                 new UserBill { Bill = bills[3], User = _pioter, Amount = 500.00m },
                 new UserBill { Bill = bills[3], User = _piotrek, Amount = 500.00m },
+
                 new UserBill { Bill = bills[4], User = _pioter, Amount = 25.00m },
                 new UserBill { Bill = bills[4], User = _mati, Amount = 25.00m }
             };

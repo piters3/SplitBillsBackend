@@ -199,9 +199,6 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<decimal>("Balance")
-                        .HasColumnType("decimal(7, 2)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
@@ -224,9 +221,6 @@ namespace SplitBillsBackend.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256);
 
-                    b.Property<decimal>("Owed")
-                        .HasColumnType("decimal(7, 2)");
-
                     b.Property<string>("PasswordHash");
 
                     b.Property<string>("PhoneNumber");
@@ -238,9 +232,6 @@ namespace SplitBillsBackend.Migrations
                     b.Property<string>("SecurityStamp");
 
                     b.Property<string>("Surname");
-
-                    b.Property<decimal>("TheyOwed")
-                        .HasColumnType("decimal(7, 2)");
 
                     b.Property<bool>("TwoFactorEnabled");
 
@@ -268,6 +259,8 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(7, 2)");
+
+                    b.Property<bool>("Settled");
 
                     b.HasKey("UserId", "BillId");
 
