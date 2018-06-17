@@ -16,7 +16,8 @@ namespace SplitBillsBackend.Mappings
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.User.Id))
                 .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.User.Email))
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.User.Name))
-                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName));
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ForMember(dest => dest.SurName, opt => opt.MapFrom(src => src.User.Surname));
 
             CreateMap<Bill, BillModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Subcategory.Category.Name))
@@ -56,6 +57,8 @@ namespace SplitBillsBackend.Mappings
                 .ForMember(dest => dest.Roles, opt => opt.MapFrom(src => src.UserRoles))
                 .ForMember(dest => dest.Friends, opt => opt.MapFrom(src => src.Friends))
                 .ForMember(dest => dest.Bills, opt => opt.MapFrom(src => src.UserBills));
+
+            CreateMap<User, FriendModel>();
         }
     }
 }

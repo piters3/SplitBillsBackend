@@ -8,6 +8,7 @@ namespace SplitBillsBackend.Data
     {
         IEnumerable<Friend> GetUserFriends(int id);
         IEnumerable<Bill> GetUserExpenses(int id);
+        IEnumerable<Bill> GetCommonExpenses(int userId, int friendId);
         void Save();
     }
 }

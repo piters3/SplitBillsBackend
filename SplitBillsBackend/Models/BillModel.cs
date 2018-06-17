@@ -12,7 +12,7 @@ namespace SplitBillsBackend.Models
         public string Notes { get; set; }
         public string CategoryName { get; set; }
         public string SubcategoryName { get; set; }
-        public UserModel Creator { get; set; }
+        public FriendModel Creator { get; set; }
         public List<PayerModel> Payers { get; set; }
     }
 }

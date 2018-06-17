@@ -38,6 +38,19 @@ namespace SplitBillsBackend.Data
                 .ToList();
         }
 
+        public IEnumerable<Bill> GetCommonExpenses(int userId, int friendId)
+        {  
+            var creators = _ctx.Bills
+                .Include(b => b.Subcategory).ThenInclude(s => s.Category)
+                .Include(b => b.UserBills).ThenInclude(user => user.User)
+                .Where(b => b.Creator.Id == userId || b.Creator.Id == friendId)
+                .ToList();
+
+            var my = creators.Where(b => b.UserBills.Any(c => c.User.Id == userId));
+            var friend = creators.Where(b => b.UserBills.Any(c => c.User.Id == friendId));
+            return my.Intersect(friend).ToList();
+        }
+
         protected void Dispose(bool disposing)
         {
             if (disposing)

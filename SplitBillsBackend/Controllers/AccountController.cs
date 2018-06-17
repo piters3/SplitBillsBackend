@@ -103,7 +103,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("Friends")]
         public IEnumerable<FriendModel> Friends()
         {
-            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == "id").Value);
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
             var all = _repo.GetUserFriends(id);
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;
@@ -118,12 +118,44 @@ namespace SplitBillsBackend.Controllers
             var all = _repo.GetUserExpenses(id);
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
 
-            var expensesSumary = model.SelectMany(bill => bill.Payers).Sum(payer => payer.Amount);
+            var expensesSummary = model.SelectMany(bill => bill.Payers).Sum(payer => payer.Amount);
 
             return new OkObjectResult(new
             {
                 model,
-                ExpensesSumary = expensesSumary
+                ExpensesSummary = expensesSummary
+            });
+        }
+
+        // GET /api/Account/CommonExpenses
+        [HttpGet("CommonExpenses/{friendId:int}")]
+        public IActionResult CommonExpenses(int friendId)
+        {
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+            var all = _repo.GetCommonExpenses(id, friendId);
+            var model = Mapper.Map<IEnumerable<BillModel>>(all);
+
+            var expensesSummary = 0.00m;
+
+            foreach (var bill in model)
+            {
+                foreach (var payer in bill.Payers)
+                {
+                    if (bill.Creator.Id == id && payer.Id == friendId)
+                    {
+                        expensesSummary += payer.Amount;
+                    }
+                    else if (bill.Creator.Id == friendId && payer.Id == id)
+                    {
+                        expensesSummary -= payer.Amount;
+                    }
+                }
+            }
+
+            return new OkObjectResult(new
+            {
+                model,
+                ExpensesSummary = expensesSummary
             });
         }
 
