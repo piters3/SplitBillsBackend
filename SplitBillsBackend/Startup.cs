@@ -57,6 +57,7 @@ namespace SplitBillsBackend
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.TryAddTransient<IBillsRepository, BillsRepository>();
             services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
+            services.TryAddTransient<ISubcategoriesRepository, SubcategoriesRepository>();
             services.TryAddTransient<IUsersRepository, UsersRepository>();
             services.TryAddTransient<IFriendsRepository, FriendsRepository>();
             services.TryAddTransient<IAccountRepository, AccountRepository>();

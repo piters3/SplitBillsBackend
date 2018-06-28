@@ -6,11 +6,11 @@ using SplitBillsBackend.Entities;
 
 namespace SplitBillsBackend.Data
 {
-    public class CategoriesRepository : ICategoriesRepository
+    public class SubcategoriesRepository : ISubcategoriesRepository
     {
         private SplitBillsDbContext _ctx;
 
-        public CategoriesRepository(SplitBillsDbContext ctx)
+        public SubcategoriesRepository(SplitBillsDbContext ctx)
         {
             _ctx = ctx;
         }
@@ -20,29 +20,29 @@ namespace SplitBillsBackend.Data
             _ctx.SaveChanges();
         }
 
-        public IEnumerable<Category> GetAll()
+        public IEnumerable<Subcategory> GetAll()
         {
-            return _ctx.Categories.Include(c => c.Subcategories).ToList();
+            return _ctx.Subcategories.ToList();
         }
 
-        public Category Get(int id)
+        public Subcategory Get(int id)
         {
-            return _ctx.Categories.Include(c => c.Subcategories).FirstOrDefault(x => x.Id == id);
+            return _ctx.Subcategories.FirstOrDefault(x => x.Id == id);
         }
 
-        public void Insert(Category entity)
+        public void Insert(Subcategory entity)
         {
-            _ctx.Categories.Add(entity);
+            _ctx.Subcategories.Add(entity);
         }
 
-        public void Update(Category entity)
+        public void Update(Subcategory entity)
         {
             _ctx.Entry(entity).State = EntityState.Modified;
         }
 
-        public void Delete(Category entity)
+        public void Delete(Subcategory entity)
         {
-            _ctx.Categories.Remove(entity);
+            _ctx.Subcategories.Remove(entity);
         }
 
         protected void Dispose(bool disposing)

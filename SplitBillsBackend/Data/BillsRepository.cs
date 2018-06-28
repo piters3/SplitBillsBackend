@@ -34,12 +34,11 @@ namespace SplitBillsBackend.Data
         public Bill Get(int id)
         {
             return _ctx.Bills
-                .Include(bill => bill.UserBills)
-                    .ThenInclude(user => user.User)
-                .Include(x => x.Subcategory)
-                    .ThenInclude(s=>s.Category)
-                .Where(x => x.Id == id)
-                .FirstOrDefault();
+                    .Include(bill => bill.UserBills)
+                .ThenInclude(user => user.User)
+                    .Include(x=>x.Subcategory)
+                .ThenInclude(s => s.Category)
+                .FirstOrDefault(x => x.Id == id);
         }
 
         public void Insert(Bill entity)

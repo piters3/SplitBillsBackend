@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -27,13 +26,19 @@ namespace SplitBillsBackend.Controllers
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
         private readonly IAccountRepository _repo;
+        private readonly IBillsRepository _billsRepo;
+        private readonly IUsersRepository _usersRepo;
+        private readonly ISubcategoriesRepository _subcatRepo;
 
-        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IAccountRepository repo)
+        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IAccountRepository repo, IBillsRepository billsRepo, IUsersRepository usersRepo, ISubcategoriesRepository subcatRepo)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
             _repo = repo;
+            _billsRepo = billsRepo;
+            _usersRepo = usersRepo;
+            _subcatRepo = subcatRepo;
         }
 
 
@@ -230,6 +235,43 @@ namespace SplitBillsBackend.Controllers
                 UserOwedTo = userOwedTo,
                 UserOwedSummary = userOwedSummary,
                 TotalBalance = owedToUserSummary - userOwedSummary
+            });
+        }
+
+
+        // POST /api/Account/AddBill
+        [HttpPost("AddBill")]
+        public IActionResult AddBill([FromBody]AddBillModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userBills = new List<UserBill>();
+
+            foreach (var payer in model.Payers)
+            {
+                userBills.Add(new UserBill { User = _usersRepo.Get(payer.Id), Amount = payer.Amount });
+            }
+
+            var bill = new Bill
+            {
+                Creator = _usersRepo.Get(model.CreatorId),
+                Date = model.Date,
+                Description = model.Description,
+                Notes = model.Notes,
+                Subcategory = _subcatRepo.Get(model.SubcategoryId),
+                TotalAmount = model.TotalAmount,
+                UserBills = userBills
+            };
+
+            _billsRepo.Insert(bill);
+            _billsRepo.Save();
+
+            return new OkObjectResult(new
+            {
+                Message = "Rachunek został dodany"
             });
         }
     }
