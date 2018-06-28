@@ -21,6 +21,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
 using Newtonsoft.Json;
+using SplitBillsBackend.Helpers;
 
 namespace SplitBillsBackend
 {
@@ -101,7 +102,7 @@ namespace SplitBillsBackend
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "admin"));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(Constants.JwtClaimIdentifiers.Role, "admin"));
             });
 
             services.AddSwaggerGen(c =>

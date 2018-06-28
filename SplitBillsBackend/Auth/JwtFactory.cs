@@ -27,7 +27,7 @@ namespace SplitBillsBackend.Auth
                  new Claim(JwtRegisteredClaimNames.Jti, await _jwtOptions.JtiGenerator()),
                  new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(_jwtOptions.IssuedAt).ToString(), ClaimValueTypes.Integer64),
                  identity.FindFirst(Constants.JwtClaimIdentifiers.Id),
-                 identity.FindFirst(ClaimTypes.Role)
+                 identity.FindFirst(Constants.JwtClaimIdentifiers.Role)
              };
 
             var jwt = new JwtSecurityToken(
@@ -48,7 +48,7 @@ namespace SplitBillsBackend.Auth
             return new ClaimsIdentity(new GenericIdentity(userName, "Token"), new[]
             {
                 new Claim(Constants.JwtClaimIdentifiers.Id, id, ClaimValueTypes.Integer),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(Constants.JwtClaimIdentifiers.Role, role)
             });
         }
 
