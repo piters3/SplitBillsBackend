@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class settled : Migration
+    public partial class history : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -249,6 +249,35 @@ namespace SplitBillsBackend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "History",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Date = table.Column<DateTime>(nullable: false),
+                    HistoryType = table.Column<int>(nullable: false),
+                    Description = table.Column<string>(nullable: true),
+                    CreatorId = table.Column<int>(nullable: true),
+                    BillId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_History", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_History_Bills_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bills",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_History_Users_CreatorId",
+                        column: x => x.CreatorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserBills",
                 columns: table => new
                 {
@@ -293,6 +322,16 @@ namespace SplitBillsBackend.Migrations
                 name: "IX_Friends_SecondFriendId",
                 table: "Friends",
                 column: "SecondFriendId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_BillId",
+                table: "History",
+                column: "BillId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_History_CreatorId",
+                table: "History",
+                column: "CreatorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -348,6 +387,9 @@ namespace SplitBillsBackend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Friends");
+
+            migrationBuilder.DropTable(
+                name: "History");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

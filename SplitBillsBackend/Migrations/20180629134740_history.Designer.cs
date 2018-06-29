@@ -10,8 +10,8 @@ using SplitBillsBackend.Data;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    [Migration("20180617121816_settled")]
-    partial class settled
+    [Migration("20180629134740_history")]
+    partial class history
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -149,6 +149,31 @@ namespace SplitBillsBackend.Migrations
                     b.HasIndex("SecondFriendId");
 
                     b.ToTable("Friends");
+                });
+
+            modelBuilder.Entity("SplitBillsBackend.Entities.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BillId");
+
+                    b.Property<int?>("CreatorId");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("HistoryType");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("History");
                 });
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Role", b =>
@@ -338,6 +363,17 @@ namespace SplitBillsBackend.Migrations
                         .WithMany("OtherFriends")
                         .HasForeignKey("SecondFriendId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("SplitBillsBackend.Entities.History", b =>
+                {
+                    b.HasOne("SplitBillsBackend.Entities.Bill", "Bill")
+                        .WithMany()
+                        .HasForeignKey("BillId");
+
+                    b.HasOne("SplitBillsBackend.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
                 });
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Subcategory", b =>

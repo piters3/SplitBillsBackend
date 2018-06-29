@@ -20,6 +20,7 @@ namespace SplitBillsBackend.Data
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<UserBill> UserBills { get; set; }
         public DbSet<Friend> Friends { get; set; }
+        public DbSet<History> History { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -29,6 +30,7 @@ namespace SplitBillsBackend.Data
             builder.Entity<Category>().ToTable("Categories");
             builder.Entity<Subcategory>().ToTable("Subcategories");
             builder.Entity<Friend>().ToTable("Friends");
+            builder.Entity<History>().ToTable("History");
 
 
             builder.Entity<User>(b =>

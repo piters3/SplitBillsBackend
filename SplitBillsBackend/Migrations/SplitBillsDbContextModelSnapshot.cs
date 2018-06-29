@@ -149,6 +149,31 @@ namespace SplitBillsBackend.Migrations
                     b.ToTable("Friends");
                 });
 
+            modelBuilder.Entity("SplitBillsBackend.Entities.History", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BillId");
+
+                    b.Property<int?>("CreatorId");
+
+                    b.Property<DateTime>("Date");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("HistoryType");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillId");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("History");
+                });
+
             modelBuilder.Entity("SplitBillsBackend.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -336,6 +361,17 @@ namespace SplitBillsBackend.Migrations
                         .WithMany("OtherFriends")
                         .HasForeignKey("SecondFriendId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("SplitBillsBackend.Entities.History", b =>
+                {
+                    b.HasOne("SplitBillsBackend.Entities.Bill", "Bill")
+                        .WithMany()
+                        .HasForeignKey("BillId");
+
+                    b.HasOne("SplitBillsBackend.Entities.User", "Creator")
+                        .WithMany()
+                        .HasForeignKey("CreatorId");
                 });
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Subcategory", b =>

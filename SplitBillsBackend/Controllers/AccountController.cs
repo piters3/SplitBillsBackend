@@ -128,7 +128,7 @@ namespace SplitBillsBackend.Controllers
 
             return new OkObjectResult(new
             {
-                model,
+                Expenses = model,
                 ExpensesSummary = expensesSummary
             });
         }
@@ -274,5 +274,20 @@ namespace SplitBillsBackend.Controllers
                 Message = "Rachunek został dodany"
             });
         }
+
+        //// GET /api/Account/Activity
+        //[HttpGet("Activity")]
+        //public IActionResult Activity()
+        //{
+        //    var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+        //    var all = _repo.GetCommonExpenses(id, friendId);
+        //    var commonExpenses = Mapper.Map<IEnumerable<BillModel>>(all);
+
+
+        //    return new OkObjectResult(new
+        //    {
+        //        CommonExpenses = commonExpenses
+        //    });
+        //}
     }
 }

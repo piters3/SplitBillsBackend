@@ -27,7 +27,6 @@ namespace SplitBillsBackend.Data
                     .ThenInclude(user => user.User)
                  .Include(x => x.Subcategory)
                     .ThenInclude(s => s.Category)
-                    .Include(b=>b.UserBills)
                 .ToList();
         }
 

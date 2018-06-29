@@ -22,7 +22,7 @@ namespace SplitBillsBackend.Data
                 AddUsersAndRoles(context);
 
                 AddData(context);
-            }     
+            }
         }
 
         private static void AddUsersAndRoles(SplitBillsDbContext context)
@@ -364,9 +364,18 @@ namespace SplitBillsBackend.Data
                 if (!context.Bills.Any(x => x.Description == b.Description))
                 {
                     context.Bills.Add(b);
+                    context.History.Add(new History
+                    {
+                        Bill = b,
+                        Creator = b.Creator,
+                        Date = b.Date,
+                        Description = b.Description,
+                        HistoryType = ActionType.Add
+                    });
                 }
             }
             context.SaveChanges();
+
 
             var userbills = new List<UserBill>
             {
