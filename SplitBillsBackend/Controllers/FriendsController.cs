@@ -12,17 +12,17 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class FriendsController : Controller
     {
-        private readonly IFriendsRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public FriendsController(IFriendsRepository repo)
+        public FriendsController(IUnitOfWork unitOfWork)
         {
-            _repo = repo;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public IEnumerable<FriendModel> Get()
         {
-            var all = _repo.GetAll();
+            var all = _unitOfWork.Friends.GetAll();
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;
         }
@@ -30,7 +30,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _unitOfWork.Friends.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -49,46 +49,46 @@ namespace SplitBillsBackend.Controllers
             }
 
             var entity = Mapper.Map<Friend>(model);
-            _repo.Insert(entity);
-            _repo.Save();
+            _unitOfWork.Friends.Add(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
 
-        //[HttpPut("{id}")]
-        //public IActionResult Put(int id, [FromBody]FriendModel model)
-        //{
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
-        //    if (id != model.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-
-        //    var entity = _repo.Get(id);
-        //    if (entity == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    Mapper.Map(model, entity);
-
-        //    _repo.Update(entity);
-        //    _repo.Save();
-        //    return Ok(entity);
-        //}
-
-        [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        [HttpPut("{id}")]
+        public IActionResult Put(int id, [FromBody]FriendModel model)
         {
-            var entity = _repo.Get(id);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (id != model.Id)
+            {
+                return BadRequest();
+            }
+
+            var entity = _unitOfWork.Friends.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _repo.Delete(entity);
-            _repo.Save();
+
+            Mapper.Map(model, entity);
+
+            _unitOfWork.Friends.Update(entity);
+            _unitOfWork.Complete();
+            return Ok(entity);
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var entity = _unitOfWork.Friends.Get(id);
+            if (entity == null)
+            {
+                return NotFound();
+            }
+            _unitOfWork.Friends.Remove(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
     }

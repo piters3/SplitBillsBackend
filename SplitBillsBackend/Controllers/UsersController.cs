@@ -11,17 +11,17 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private readonly IUsersRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UsersController(IUsersRepository repo)
+        public UsersController(IUnitOfWork unitOfWork)
         {
-            _repo = repo;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public IEnumerable<UserModel> Get()
         {
-            var all = _repo.GetAll();
+            var all = _unitOfWork.Users.GetAll();
             var model = Mapper.Map<IEnumerable<UserModel>>(all);
             return (model);
         }
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _unitOfWork.Users.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -48,8 +48,8 @@ namespace SplitBillsBackend.Controllers
             }
 
             var entity = Mapper.Map<User>(model);
-            _repo.Insert(entity);
-            _repo.Save();
+            _unitOfWork.Users.Remove(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
 
@@ -65,7 +65,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest();
             }
 
-            var entity = _repo.Get(id);
+            var entity = _unitOfWork.Users.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -73,21 +73,21 @@ namespace SplitBillsBackend.Controllers
 
             Mapper.Map(model, entity);
 
-            _repo.Update(entity);
-            _repo.Save();
+            _unitOfWork.Users.Update(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _unitOfWork.Users.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _repo.Delete(entity);
-            _repo.Save();
+            _unitOfWork.Users.Remove(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
     }

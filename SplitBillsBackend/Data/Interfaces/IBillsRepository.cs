@@ -1,16 +1,13 @@
-﻿using SplitBillsBackend.Entities;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using SplitBillsBackend.Entities;
 
-namespace SplitBillsBackend.Data
+namespace SplitBillsBackend.Data.Interfaces
 {
-    public interface IAccountRepository : IDisposable
+    public interface IBillsRepository : IRepository<Bill>
     {
-        IEnumerable<Friend> GetUserFriends(int id);
         IEnumerable<Bill> GetUserExpenses(int id);
         IEnumerable<Bill> GetCommonExpenses(int userId, int friendId);
         IEnumerable<Bill> GetBillsCreatedByUser(int id);
         IEnumerable<Bill> GetBillsInWhichUserIsPayer(int id);
-        void Save();
     }
 }

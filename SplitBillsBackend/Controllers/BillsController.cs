@@ -11,17 +11,17 @@ namespace SplitBillsBackend.Controllers
     [Route("api/[controller]")]
     public class BillsController : Controller
     {
-        private readonly IBillsRepository _repo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BillsController(IBillsRepository repo)
+        public BillsController(IUnitOfWork unitOfWork)
         {
-            _repo = repo;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public IEnumerable<BillModel> Get()
         {
-            var all = _repo.GetAll();
+            var all = _unitOfWork.Bills.GetAll();
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
             return model;
         }
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _repo.Get(id);
+            var entity = _unitOfWork.Bills.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -44,8 +44,8 @@ namespace SplitBillsBackend.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _repo.Insert(entity);
-            _repo.Save();
+            _unitOfWork.Bills.Add(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
 
@@ -60,25 +60,25 @@ namespace SplitBillsBackend.Controllers
             {
                 return BadRequest();
             }
-            if (_repo.Get(id) == null)
+            if (_unitOfWork.Bills.Get(id) == null)
             {
                 return NotFound();
             }
-            _repo.Update(entity);
-            _repo.Save();
+            _unitOfWork.Bills.Update(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
 
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Bill entity = _repo.Get(id);
+            Bill entity = _unitOfWork.Bills.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _repo.Delete(entity);
-            _repo.Save();
+            _unitOfWork.Bills.Remove(entity);
+            _unitOfWork.Complete();
             return Ok(entity);
         }
     }

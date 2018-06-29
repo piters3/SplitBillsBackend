@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using AutoMapper;
+﻿using AutoMapper;
 using SplitBillsBackend.Entities;
 using SplitBillsBackend.Models;
 

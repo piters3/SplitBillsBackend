@@ -1,33 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using SplitBillsBackend.Data.Interfaces;
 using SplitBillsBackend.Entities;
 
-namespace SplitBillsBackend.Data
+namespace SplitBillsBackend.Data.Repositories
 {
-    public class AccountRepository : IAccountRepository
+    public class BillsRepository : Repository<Bill>, IBillsRepository
     {
-        private SplitBillsDbContext _ctx;
+        private SplitBillsDbContext _ctx => Ctx as SplitBillsDbContext;
 
-        public AccountRepository(SplitBillsDbContext ctx)
+        public BillsRepository(SplitBillsDbContext context) : base(context)
         {
-            _ctx = ctx;
-        }
-
-
-        public void Save()
-        {
-            _ctx.SaveChanges();
-        }
-
-        public IEnumerable<Friend> GetUserFriends(int id)
-        {
-            return _ctx.Friends
-                .Include(f => f.FirstFriend)
-                .Include(f => f.SecondFriend)
-                .Where(f => f.FirstFriend.Id == id)
-                .ToList();
         }
 
         public IEnumerable<Bill> GetUserExpenses(int id)
@@ -72,24 +56,6 @@ namespace SplitBillsBackend.Data
                 .ToList();
 
             return billsInWhichUserIsPayer;
-        }
-
-        protected void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_ctx != null)
-                {
-                    _ctx.Dispose();
-                    _ctx = null;
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }

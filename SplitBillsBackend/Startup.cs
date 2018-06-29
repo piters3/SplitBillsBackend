@@ -17,7 +17,6 @@ using SplitBillsBackend.Mappings;
 using Swashbuckle.AspNetCore.Swagger;
 using SplitBillsBackend.Auth;
 using System.Net;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
 using Newtonsoft.Json;
@@ -56,12 +55,13 @@ namespace SplitBillsBackend
 
             services.AddSingleton<IJwtFactory, JwtFactory>();
             services.TryAddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.TryAddTransient<IBillsRepository, BillsRepository>();
-            services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
-            services.TryAddTransient<ISubcategoriesRepository, SubcategoriesRepository>();
-            services.TryAddTransient<IUsersRepository, UsersRepository>();
-            services.TryAddTransient<IFriendsRepository, FriendsRepository>();
-            services.TryAddTransient<IAccountRepository, AccountRepository>();
+            services.TryAddTransient<IUnitOfWork, UnitOfWork>();
+            //services.TryAddTransient<IBillsRepository, BillsRepository>();
+            //services.TryAddTransient<ICategoriesRepository, CategoriesRepository>();
+            //services.TryAddTransient<ISubcategoriesRepository, SubcategoriesRepository>();
+            //services.TryAddTransient<IUsersRepository, UsersRepository>();
+            //services.TryAddTransient<IFriendsRepository, FriendsRepository>();
+            //services.TryAddTransient<IAccountRepository, AccountRepository>();
 
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
 

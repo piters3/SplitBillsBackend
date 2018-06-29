@@ -25,20 +25,14 @@ namespace SplitBillsBackend.Controllers
         private readonly UserManager<User> _userManager;
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
-        private readonly IAccountRepository _repo;
-        private readonly IBillsRepository _billsRepo;
-        private readonly IUsersRepository _usersRepo;
-        private readonly ISubcategoriesRepository _subcatRepo;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IAccountRepository repo, IBillsRepository billsRepo, IUsersRepository usersRepo, ISubcategoriesRepository subcatRepo)
+        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUnitOfWork unitOfWork)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
-            _repo = repo;
-            _billsRepo = billsRepo;
-            _usersRepo = usersRepo;
-            _subcatRepo = subcatRepo;
+            _unitOfWork = unitOfWork;
         }
 
 
@@ -110,7 +104,7 @@ namespace SplitBillsBackend.Controllers
         public IEnumerable<FriendModel> Friends()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _repo.GetUserFriends(id);
+            var all = _unitOfWork.Friends.GetUserFriends(id);
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;
         }
@@ -121,7 +115,7 @@ namespace SplitBillsBackend.Controllers
         public IActionResult Expenses()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _repo.GetUserExpenses(id);
+            var all = _unitOfWork.Bills.GetUserExpenses(id);
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
 
             var expensesSummary = model.SelectMany(bill => bill.Payers).Sum(payer => payer.Amount);
@@ -138,7 +132,7 @@ namespace SplitBillsBackend.Controllers
         public IActionResult CommonExpenses(int friendId)
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _repo.GetCommonExpenses(id, friendId);
+            var all = _unitOfWork.Bills.GetCommonExpenses(id, friendId);
             var commonExpenses = Mapper.Map<IEnumerable<BillModel>>(all);
 
             var expensesSummary = 0.00m;
@@ -170,8 +164,8 @@ namespace SplitBillsBackend.Controllers
         public IActionResult Dashboard()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var billsCreatedByUser = _repo.GetBillsCreatedByUser(id);
-            var billsInWhichUserIsPayer = _repo.GetBillsInWhichUserIsPayer(id);
+            var billsCreatedByUser = _unitOfWork.Bills.GetBillsCreatedByUser(id);
+            var billsInWhichUserIsPayer = _unitOfWork.Bills.GetBillsInWhichUserIsPayer(id);
             var userBorrowers = new List<BorrowerModel>();
             var userOwedTo = new List<BorrowerModel>();
 
@@ -252,22 +246,22 @@ namespace SplitBillsBackend.Controllers
 
             foreach (var payer in model.Payers)
             {
-                userBills.Add(new UserBill { User = _usersRepo.Get(payer.Id), Amount = payer.Amount });
+                userBills.Add(new UserBill { User = _unitOfWork.Users.Get(payer.Id), Amount = payer.Amount });
             }
 
             var bill = new Bill
             {
-                Creator = _usersRepo.Get(model.CreatorId),
+                Creator = _unitOfWork.Users.Get(model.CreatorId),
                 Date = model.Date,
                 Description = model.Description,
                 Notes = model.Notes,
-                Subcategory = _subcatRepo.Get(model.SubcategoryId),
+                Subcategory = _unitOfWork.Subcategories.Get(model.SubcategoryId),
                 TotalAmount = model.TotalAmount,
                 UserBills = userBills
             };
 
-            _billsRepo.Insert(bill);
-            _billsRepo.Save();
+            _unitOfWork.Bills.Add(bill);
+            _unitOfWork.Complete();
 
             return new OkObjectResult(new
             {
