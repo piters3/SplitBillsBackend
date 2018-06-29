@@ -3,25 +3,45 @@ using SplitBillsBackend.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace SplitBillsBackend.Data
 {
     public static class DbInitializer
     {
-        private static User _pioter;
-        private static User _mati;
-        private static User _piotrek;
-        private static User _user;
-        private static User _admin;
+        private static User _pioter, _mati, _piotrek, _user, _admin;
+        private static List<Category> _categories;
+        private static List<Subcategory> _rozrywka, _jedzenie, _dom, _zycie, _uzytkowanie, _transport;
+        private static List<Bill> _bills;
+        private static List<UserBill> _userbills;
 
 
         public static void Initialize(SplitBillsDbContext context)
         {
-            if (context.Database.EnsureCreated())
-            {
-                AddUsersAndRoles(context);
 
-                AddData(context);
+            var exist = (context.Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator).Exists();
+            if (!exist)
+            {
+                Console.WriteLine("Tworzenie bazy...");
+                if (context.Database.EnsureCreated())
+                {
+                    Console.WriteLine("Dodawanie użytkowników i ról...");
+                    AddUsersAndRoles(context);
+
+                    Console.WriteLine("Dodawanie kategorii...");
+                    AddCategories(context);
+
+                    Console.WriteLine("Dodawanie podkategorii...");
+                    AddSubcategories(context);
+
+                    Console.WriteLine("Dodawanie rachunków...");
+                    AddBills(context);
+                    AddUserBills(context);
+
+                    Console.WriteLine("Dodawanie przyjaciół...");
+                    AddFriends(context);
+                }
             }
         }
 
@@ -210,204 +230,8 @@ namespace SplitBillsBackend.Data
             context.SaveChanges();
         }
 
-        private static void AddData(SplitBillsDbContext context)
+        private static void AddFriends(SplitBillsDbContext context)
         {
-            var categories = new List<Category>
-            {
-                new Category { Name = "Rozrywka" },
-                new Category { Name = "Jedzenie i picie" },
-                new Category { Name = "Dom" },
-                new Category { Name = "Życie" },
-                new Category { Name = "Transport" },
-                new Category { Name = "Użytkowanie" }
-            };
-
-            foreach (var c in categories)
-            {
-                if (!context.Categories.Any(x => x.Name == c.Name))
-                {
-                    context.Categories.Add(c);
-                }
-            }
-            context.SaveChanges();
-
-
-            var rozrywka = new List<Subcategory>
-            {
-                new Subcategory { Name = "Gry", Category = categories[0] },
-                new Subcategory { Name = "Filmy", Category = categories[0] },
-                new Subcategory { Name = "Muzyka", Category = categories[0] },
-                new Subcategory { Name = "Sport", Category = categories[0] },
-                new Subcategory { Name = "Inne", Category = categories[0] }
-            };
-
-            foreach (var s in rozrywka)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var jedzenie = new List<Subcategory>
-            {
-                new Subcategory { Name = "Jedzenie na mieście", Category = categories[1] },
-                new Subcategory { Name = "Artykuły spożywcze", Category = categories[1] },
-                new Subcategory { Name = "Trunek", Category = categories[1] },
-                new Subcategory { Name = "Inne", Category = categories[1] }
-            };
-
-            foreach (var s in jedzenie)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var dom = new List<Subcategory>
-            {
-                new Subcategory { Name = "Elektronika", Category = categories[2] },
-                new Subcategory { Name = "Meble", Category = categories[2] },
-                new Subcategory { Name = "Artykuły gospodarstwa domowego", Category = categories[2] },
-                new Subcategory { Name = "Konserwacja", Category = categories[2] },
-                new Subcategory { Name = "Hipoteka", Category = categories[2] },
-                new Subcategory { Name = "Zwierzaki", Category = categories[2] },
-                new Subcategory { Name = "Czynsz", Category = categories[2] },
-                new Subcategory { Name = "Usługi", Category = categories[2] },
-                new Subcategory { Name = "Inne", Category = categories[2] }
-            };
-
-            foreach (var s in dom)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var zycie = new List<Subcategory>
-            {
-                new Subcategory { Name = "Odzież", Category = categories[3] },
-                new Subcategory { Name = "Prezenty", Category = categories[3] },
-                new Subcategory { Name = "Ubezpieczenie", Category = categories[3] },
-                new Subcategory { Name = "Medyczne wydatki", Category = categories[3] },
-                new Subcategory { Name = "Podatki", Category = categories[3] },
-                new Subcategory { Name = "Inne", Category = categories[3] }
-            };
-
-            foreach (var s in zycie)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var transport = new List<Subcategory>
-            {
-                new Subcategory { Name = "Rower", Category = categories[4] },
-                new Subcategory { Name = "Autobus/pociąg", Category = categories[4] },
-                new Subcategory { Name = "Samochód", Category = categories[4] },
-                new Subcategory { Name = "Benzyna/gaz", Category = categories[4] },
-                new Subcategory { Name = "Hotel", Category = categories[4] },
-                new Subcategory { Name = "Parking", Category = categories[4] },
-                new Subcategory { Name = "Samolot", Category = categories[4] },
-                new Subcategory { Name = "Taksówka", Category = categories[4] },
-                new Subcategory { Name = "Inne", Category = categories[4] }
-            };
-
-            foreach (var s in transport)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var uzytkowanie = new List<Subcategory>
-            {
-                new Subcategory { Name = "Czyszczenie", Category = categories[5] },
-                new Subcategory { Name = "Elektryka", Category = categories[5] },
-                new Subcategory { Name = "Ogrzewanie", Category = categories[5] },
-                new Subcategory { Name = "Śmieci", Category = categories[5] },
-                new Subcategory { Name = "TV/Telefon/Internet", Category = categories[5] },
-                new Subcategory { Name = "Woda", Category = categories[5] },
-                new Subcategory { Name = "Inne", Category = categories[5] }
-            };
-
-            foreach (var s in uzytkowanie)
-            {
-                if (!context.Subcategories.Any(x => x.Name == s.Name))
-                {
-                    context.Subcategories.Add(s);
-                }
-            }
-            context.SaveChanges();
-
-            var bills = new List<Bill>
-            {
-                new Bill { Creator = _pioter, TotalAmount = 2.60m, Date = new DateTime(2018, 6, 1, 12, 23, 4), Description = "Bułki", Notes = "Dobry były", Subcategory = jedzenie[1] },
-                new Bill { Creator = _pioter, TotalAmount = 92.56m, Date = new DateTime(2018, 4, 01, 12, 33, 14), Description = "Jägermeister", Notes = "Na melanż", Subcategory = jedzenie[2] },
-                new Bill { Creator = _mati, TotalAmount = 54.00m, Date = new DateTime(2018, 6, 11, 10, 3, 49), Description = "Kino", Notes = "Kino notatki", Subcategory = rozrywka[1] },
-                new Bill { Creator = _piotrek, TotalAmount = 1500.00m, Date = new DateTime(2018, 5, 9, 10, 30, 0), Description = "Czynsz maj", Notes = "Brak", Subcategory = dom[6] },
-                new Bill { Creator = _mati, TotalAmount = 50.00m, Date = new DateTime(2018, 5, 10, 11, 30, 0), Description = "Obiad", Notes = "Nie ma notatek", Subcategory = jedzenie[0] }
-            };
-
-            foreach (var b in bills)
-            {
-                if (!context.Bills.Any(x => x.Description == b.Description))
-                {
-                    context.Bills.Add(b);
-                    context.History.Add(new History
-                    {
-                        Bill = b,
-                        Creator = b.Creator,
-                        Date = b.Date,
-                        Description = b.Description,
-                        HistoryType = ActionType.Add
-                    });
-                }
-            }
-            context.SaveChanges();
-
-
-            var userbills = new List<UserBill>
-            {
-                new UserBill { Bill = bills[0], User = _pioter, Amount = 1.30m },
-                new UserBill { Bill = bills[0], User = _mati, Amount = 1.30m },
-
-                new UserBill { Bill = bills[1], User = _pioter, Amount = 23.14m },
-                new UserBill { Bill = bills[1], User = _mati, Amount = 23.14m },
-                new UserBill { Bill = bills[1], User = _piotrek, Amount = 23.14m },
-                new UserBill { Bill = bills[1], User = _user, Amount = 23.14m },
-
-                new UserBill { Bill = bills[2], User = _mati, Amount = 18.00m },
-                new UserBill { Bill = bills[2], User = _pioter, Amount = 18.00m },
-                new UserBill { Bill = bills[2], User = _user, Amount = 18.00m },
-
-                new UserBill { Bill = bills[3], User = _mati, Amount =  500.00m },
-                new UserBill { Bill = bills[3], User = _pioter, Amount = 500.00m },
-                new UserBill { Bill = bills[3], User = _piotrek, Amount = 500.00m },
-
-                new UserBill { Bill = bills[4], User = _pioter, Amount = 25.00m },
-                new UserBill { Bill = bills[4], User = _mati, Amount = 25.00m }
-            };
-
-            foreach (var b in userbills)
-            {
-                if (!context.UserBills.Any(x => x.Bill == b.Bill))
-                {
-                    context.UserBills.Add(b);
-                }
-            }
-            context.SaveChanges();
-
             if (!context.Friends.Any())
             {
                 _pioter.Friends.Add(new Friend { FirstFriend = _pioter, SecondFriend = _mati });
@@ -425,6 +249,261 @@ namespace SplitBillsBackend.Data
                 _pioter.Friends.Add(new Friend { FirstFriend = _pioter, SecondFriend = _admin });
                 _admin.Friends.Add(new Friend { FirstFriend = _admin, SecondFriend = _pioter });
             }
+
+            context.SaveChanges();
+        }
+
+        private static void AddUserBills(SplitBillsDbContext context)
+        {
+            _userbills = new List<UserBill>
+            {
+                new UserBill { Bill = _bills[0], User = _pioter, Amount = 1.30m },
+                new UserBill { Bill = _bills[0], User = _mati, Amount = 1.30m },
+
+                new UserBill { Bill = _bills[1], User = _pioter, Amount = 23.14m },
+                new UserBill { Bill = _bills[1], User = _mati, Amount = 23.14m },
+                new UserBill { Bill = _bills[1], User = _piotrek, Amount = 23.14m },
+                new UserBill { Bill = _bills[1], User = _user, Amount = 23.14m },
+
+                new UserBill { Bill = _bills[2], User = _mati, Amount = 18.00m },
+                new UserBill { Bill = _bills[2], User = _pioter, Amount = 18.00m },
+                new UserBill { Bill = _bills[2], User = _user, Amount = 18.00m },
+
+                new UserBill { Bill = _bills[3], User = _mati, Amount =  500.00m },
+                new UserBill { Bill = _bills[3], User = _pioter, Amount = 500.00m },
+                new UserBill { Bill = _bills[3], User = _piotrek, Amount = 500.00m },
+
+                new UserBill { Bill = _bills[4], User = _pioter, Amount = 25.00m },
+                new UserBill { Bill = _bills[4], User = _mati, Amount = 25.00m }
+            };
+
+            foreach (var b in _userbills)
+            {
+                if (!context.UserBills.Any(x => x.Bill == b.Bill))
+                {
+                    context.UserBills.Add(b);
+                }
+            }
+            context.SaveChanges();
+        }
+
+        private static void AddBills(SplitBillsDbContext context)
+        {
+            _bills = new List<Bill>
+            {
+                new Bill
+                {
+                    Creator = _pioter,
+                    TotalAmount = 2.60m,
+                    Date = new DateTime(2018, 6, 1, 12, 23, 4),
+                    Description = "Bułki",
+                    Notes = "Dobry były",
+                    Subcategory = _jedzenie[1]
+                },
+                new Bill
+                {
+                    Creator = _pioter,
+                    TotalAmount = 92.56m,
+                    Date = new DateTime(2018, 4, 01, 12, 33, 14),
+                    Description = "Jägermeister",
+                    Notes = "Na melanż",
+                    Subcategory = _jedzenie[2]
+                },
+                new Bill
+                {
+                    Creator = _mati,
+                    TotalAmount = 54.00m,
+                    Date = new DateTime(2018, 6, 11, 10, 3, 49),
+                    Description = "Kino",
+                    Notes = "Kino notatki",
+                    Subcategory = _rozrywka[1]
+                },
+                new Bill
+                {
+                    Creator = _piotrek,
+                    TotalAmount = 1500.00m,
+                    Date = new DateTime(2018, 5, 9, 10, 30, 0),
+                    Description = "Czynsz maj",
+                    Notes = "Brak",
+                    Subcategory = _dom[6]
+                },
+                new Bill
+                {
+                    Creator = _mati,
+                    TotalAmount = 50.00m,
+                    Date = new DateTime(2018, 5, 10, 11, 30, 0),
+                    Description = "Obiad",
+                    Notes = "Nie ma notatek",
+                    Subcategory = _jedzenie[0]
+                }
+            };
+
+            foreach (var b in _bills)
+            {
+                if (!context.Bills.Any(x => x.Description == b.Description))
+                {
+                    context.Bills.Add(b);
+                    context.History.Add(new History
+                    {
+                        Bill = b,
+                        Creator = b.Creator,
+                        Date = b.Date,
+                        Description = b.Description,
+                        HistoryType = ActionType.Add
+                    });
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void AddSubcategories(SplitBillsDbContext context)
+        {
+            _rozrywka = new List<Subcategory>
+            {
+                new Subcategory {Name = "Gry", Category = _categories[0]},
+                new Subcategory {Name = "Filmy", Category = _categories[0]},
+                new Subcategory {Name = "Muzyka", Category = _categories[0]},
+                new Subcategory {Name = "Sport", Category = _categories[0]},
+                new Subcategory {Name = "Inne", Category = _categories[0]}
+            };
+
+            foreach (var s in _rozrywka)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+
+            _jedzenie = new List<Subcategory>
+            {
+                new Subcategory {Name = "Jedzenie na mieście", Category = _categories[1]},
+                new Subcategory {Name = "Artykuły spożywcze", Category = _categories[1]},
+                new Subcategory {Name = "Trunek", Category = _categories[1]},
+                new Subcategory {Name = "Inne", Category = _categories[1]}
+            };
+
+            foreach (var s in _jedzenie)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+
+            _dom = new List<Subcategory>
+            {
+                new Subcategory {Name = "Elektronika", Category = _categories[2]},
+                new Subcategory {Name = "Meble", Category = _categories[2]},
+                new Subcategory {Name = "Artykuły gospodarstwa domowego", Category = _categories[2]},
+                new Subcategory {Name = "Konserwacja", Category = _categories[2]},
+                new Subcategory {Name = "Hipoteka", Category = _categories[2]},
+                new Subcategory {Name = "Zwierzaki", Category = _categories[2]},
+                new Subcategory {Name = "Czynsz", Category = _categories[2]},
+                new Subcategory {Name = "Usługi", Category = _categories[2]},
+                new Subcategory {Name = "Inne", Category = _categories[2]}
+            };
+
+            foreach (var s in _dom)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+
+            _zycie = new List<Subcategory>
+            {
+                new Subcategory {Name = "Odzież", Category = _categories[3]},
+                new Subcategory {Name = "Prezenty", Category = _categories[3]},
+                new Subcategory {Name = "Ubezpieczenie", Category = _categories[3]},
+                new Subcategory {Name = "Medyczne wydatki", Category = _categories[3]},
+                new Subcategory {Name = "Podatki", Category = _categories[3]},
+                new Subcategory {Name = "Inne", Category = _categories[3]}
+            };
+
+            foreach (var s in _zycie)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+
+            _transport = new List<Subcategory>
+            {
+                new Subcategory {Name = "Rower", Category = _categories[4]},
+                new Subcategory {Name = "Autobus/pociąg", Category = _categories[4]},
+                new Subcategory {Name = "Samochód", Category = _categories[4]},
+                new Subcategory {Name = "Benzyna/gaz", Category = _categories[4]},
+                new Subcategory {Name = "Hotel", Category = _categories[4]},
+                new Subcategory {Name = "Parking", Category = _categories[4]},
+                new Subcategory {Name = "Samolot", Category = _categories[4]},
+                new Subcategory {Name = "Taksówka", Category = _categories[4]},
+                new Subcategory {Name = "Inne", Category = _categories[4]}
+            };
+
+            foreach (var s in _transport)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+
+            _uzytkowanie = new List<Subcategory>
+            {
+                new Subcategory {Name = "Czyszczenie", Category = _categories[5]},
+                new Subcategory {Name = "Elektryka", Category = _categories[5]},
+                new Subcategory {Name = "Ogrzewanie", Category = _categories[5]},
+                new Subcategory {Name = "Śmieci", Category = _categories[5]},
+                new Subcategory {Name = "TV/Telefon/Internet", Category = _categories[5]},
+                new Subcategory {Name = "Woda", Category = _categories[5]},
+                new Subcategory {Name = "Inne", Category = _categories[5]}
+            };
+
+            foreach (var s in _uzytkowanie)
+            {
+                if (!context.Subcategories.Any(x => x.Name == s.Name))
+                {
+                    context.Subcategories.Add(s);
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void AddCategories(SplitBillsDbContext context)
+        {
+            _categories = new List<Category>
+            {
+                new Category {Name = "Rozrywka"},
+                new Category {Name = "Jedzenie i picie"},
+                new Category {Name = "Dom"},
+                new Category {Name = "Życie"},
+                new Category {Name = "Transport"},
+                new Category {Name = "Użytkowanie"}
+            };
+
+            foreach (var c in _categories)
+            {
+                if (!context.Categories.Any(x => x.Name == c.Name))
+                {
+                    context.Categories.Add(c);
+                }
+            }
+
             context.SaveChanges();
         }
     }
