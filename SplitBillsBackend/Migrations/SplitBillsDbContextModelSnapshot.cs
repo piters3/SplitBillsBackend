@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SplitBillsBackend.Data;
 
 namespace SplitBillsBackend.Migrations
@@ -225,6 +226,10 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
+
+                    b.Property<bool>("Connected");
+
+                    b.Property<string>("ConnectionId");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);

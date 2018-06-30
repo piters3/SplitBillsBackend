@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using SplitBillsBackend.Extensions;
 using Newtonsoft.Json;
 using SplitBillsBackend.Helpers;
+using SplitBillsBackend.Hubs;
 
 namespace SplitBillsBackend
 {
@@ -141,6 +142,7 @@ namespace SplitBillsBackend
             services.AddAutoMapper();
 
             services.AddCors();
+            services.AddSignalR();
             services.AddMvc()
                 .AddJsonOptions(options =>
                 {
@@ -188,15 +190,22 @@ namespace SplitBillsBackend
 
             DbInitializer.Initialize(dbContext);
 
-            app.UseAuthentication();
+           
             app.UseDefaultFiles();
             app.UseStaticFiles();
-
+       
             app.UseCors(builder => builder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .AllowCredentials());
+
+            app.UseSignalR(routes =>
+            {
+                routes.MapHub<NotificationHub>("/notifications");
+            });
+
+            app.UseAuthentication();
             app.UseMvc();
 
         }

@@ -28,9 +28,8 @@ namespace SplitBillsBackend.Entities
         public string Surname { get; set; }
         public bool Enabled { get; set; }
         public DateTime RegisterDate { get; set; }
-        //public decimal Balance { get; set; }
-        //public decimal Owed { get; set; }
-        //public decimal TheyOwed { get; set; }
+        public string ConnectionId { get; set; }
+        public bool Connected { get; set; }
 
         public virtual List<Bill> Bills { get; set; }
         public virtual List<UserBill> UserBills { get; set; }

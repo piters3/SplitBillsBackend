@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class history : Migration
+    public partial class signalr : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -59,7 +59,9 @@ namespace SplitBillsBackend.Migrations
                     Name = table.Column<string>(nullable: true),
                     Surname = table.Column<string>(nullable: true),
                     Enabled = table.Column<bool>(nullable: false),
-                    RegisterDate = table.Column<DateTime>(nullable: false)
+                    RegisterDate = table.Column<DateTime>(nullable: false),
+                    ConnectionId = table.Column<string>(nullable: true),
+                    Connected = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

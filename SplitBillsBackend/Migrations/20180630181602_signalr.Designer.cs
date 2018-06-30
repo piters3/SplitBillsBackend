@@ -10,8 +10,8 @@ using SplitBillsBackend.Data;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    [Migration("20180629134740_history")]
-    partial class history
+    [Migration("20180630181602_signalr")]
+    partial class signalr
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -228,6 +228,10 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
+
+                    b.Property<bool>("Connected");
+
+                    b.Property<string>("ConnectionId");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256);

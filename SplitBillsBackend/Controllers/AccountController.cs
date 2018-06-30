@@ -7,12 +7,14 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using SplitBillsBackend.Auth;
 using SplitBillsBackend.Data;
 using SplitBillsBackend.Entities;
 using SplitBillsBackend.Helpers;
+using SplitBillsBackend.Hubs;
 using SplitBillsBackend.Mappings;
 using SplitBillsBackend.Models;
 
@@ -26,13 +28,15 @@ namespace SplitBillsBackend.Controllers
         private readonly IJwtFactory _jwtFactory;
         private readonly JwtIssuerOptions _jwtOptions;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUnitOfWork unitOfWork)
+        public AccountController(UserManager<User> userManager, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUnitOfWork unitOfWork, IHubContext<NotificationHub> hubContext)
         {
             _userManager = userManager;
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
             _unitOfWork = unitOfWork;
+            _hubContext = hubContext;
         }
 
 
@@ -70,9 +74,11 @@ namespace SplitBillsBackend.Controllers
             }
 
             var identity = await GetClaimsIdentity(credentials.UserName, credentials.Password);
+            NotificationHub.Identity = identity;
+
             if (identity == null)
             {
-                return BadRequest(identity);
+                return BadRequest();
             }
 
             var jwt = await Tokens.GenerateJwt(identity, _jwtFactory, credentials.UserName, _jwtOptions, new JsonSerializerSettings { Formatting = Formatting.Indented });
@@ -263,6 +269,16 @@ namespace SplitBillsBackend.Controllers
             _unitOfWork.BillsRepository.Add(bill);
             _unitOfWork.Complete();
 
+            //var qwe = new
+            //{
+            //    Message = "Dodano rachuenk",
+            //    Id = 3,
+            //    Http = "www.cos.pl"
+            //};
+            //_hubContext.Clients.All.SendAsync("SendNotification", qwe);
+
+            //_hubContext.Clients.Clients(new List<string>() { "connectionId1", "connectionId2",... }).sendMessage("hello word");
+
             return new OkObjectResult(new
             {
                 Message = "Rachunek został dodany"
@@ -288,5 +304,7 @@ namespace SplitBillsBackend.Controllers
 
             return model;
         }
+
+
     }
 }
