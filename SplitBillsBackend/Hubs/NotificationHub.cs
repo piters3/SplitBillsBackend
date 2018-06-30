@@ -38,15 +38,16 @@ namespace SplitBillsBackend.Hubs
         public override Task OnConnectedAsync()
         {
             var connectionId = Context.ConnectionId;
-            var userId = Convert.ToInt32(Identity.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            CurrentUser = _unitOfWork.UsersRepository.Get(userId);
-
-            CurrentUser.Connected = true;
-            CurrentUser.ConnectionId = connectionId;
-
-            _unitOfWork.UsersRepository.Update(CurrentUser);
-            _unitOfWork.Complete();
-
+            if (Identity != null)
+            {
+                var userId = Convert.ToInt32(Identity.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+                CurrentUser = _unitOfWork.UsersRepository.Get(userId);
+                CurrentUser.Connected = true;
+                CurrentUser.ConnectionId = connectionId;
+                _unitOfWork.UsersRepository.Update(CurrentUser);
+                _unitOfWork.Complete();
+            }
+                  
             return base.OnConnectedAsync();
         }
 
@@ -57,6 +58,9 @@ namespace SplitBillsBackend.Hubs
 
             _unitOfWork.UsersRepository.Update(CurrentUser);
             _unitOfWork.Complete();
+
+            Identity = null;
+            CurrentUser = null;
 
             return base.OnDisconnectedAsync(exception);
         }

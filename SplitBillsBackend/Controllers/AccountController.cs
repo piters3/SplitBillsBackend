@@ -248,36 +248,31 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            var userBills = new List<UserBill>();
+            //var userBills = new List<UserBill>();
 
-            foreach (var payer in model.Payers)
-            {
-                userBills.Add(new UserBill { User = _unitOfWork.UsersRepository.Get(payer.Id), Amount = payer.Amount });
-            }
+            //foreach (var payer in model.Payers)
+            //{
+            //    userBills.Add(new UserBill { User = _unitOfWork.UsersRepository.Get(payer.Id), Amount = payer.Amount });
+            //}
 
             var bill = new Bill
             {
                 Creator = _unitOfWork.UsersRepository.Get(model.CreatorId),
                 Date = model.Date,
                 Description = model.Description,
-                Notes = model.Notes,
+                Notes = model.Notes.Select(n => new Note { Id = n.Id, Text = n.Text }).ToList(),
                 Subcategory = _unitOfWork.SubcategoriesRepository.Get(model.SubcategoryId),
                 TotalAmount = model.TotalAmount,
-                UserBills = userBills
+                UserBills = model.Payers.Select(p => new UserBill { User = _unitOfWork.UsersRepository.Get(p.Id), Amount = p.Amount }).ToList()
             };
 
             _unitOfWork.BillsRepository.Add(bill);
+            var usersToNofify = _unitOfWork.UsersRepository.GetUsersConnectionIds(model.Payers.Select(x => x.Id).ToList());
+
+            //_hubContext.Clients.Clients(usersToNofify).SendAsync("SendNotification", $"Użytkownik {bill.Creator.UserName} dodał rachunek {model.Description}!");
+            _hubContext.Clients.All.SendAsync("SendNotification", $"Użytkownik {bill.Creator.UserName} dodał rachunek {model.Description}!");
+
             _unitOfWork.Complete();
-
-            var qwe = new
-            {
-                Message = "Dodano rachuenk",
-                Id = 3,
-                Http = "www.cos.pl"
-            };
-            _hubContext.Clients.All.SendAsync("SendNotification", qwe);
-
-            //_hubContext.Clients.Clients(new List<string>() { "connectionId1", "connectionId2",... }).sendMessage("hello word");
 
             return new OkObjectResult(new
             {

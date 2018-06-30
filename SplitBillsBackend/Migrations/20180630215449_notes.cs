@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class signalr : Migration
+    public partial class notes : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -229,7 +229,6 @@ namespace SplitBillsBackend.Migrations
                     Description = table.Column<string>(nullable: true),
                     TotalAmount = table.Column<decimal>(type: "decimal(7, 2)", nullable: false),
                     Date = table.Column<DateTime>(nullable: false),
-                    Notes = table.Column<string>(nullable: true),
                     CreatorId = table.Column<int>(nullable: true),
                     SubcategoryId = table.Column<int>(nullable: true)
                 },
@@ -275,6 +274,26 @@ namespace SplitBillsBackend.Migrations
                         name: "FK_History_Users_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Notes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Text = table.Column<string>(nullable: true),
+                    BillId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Notes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Notes_Bills_BillId",
+                        column: x => x.BillId,
+                        principalTable: "Bills",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -336,6 +355,11 @@ namespace SplitBillsBackend.Migrations
                 column: "CreatorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Notes_BillId",
+                table: "Notes",
+                column: "BillId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
@@ -392,6 +416,9 @@ namespace SplitBillsBackend.Migrations
 
             migrationBuilder.DropTable(
                 name: "History");
+
+            migrationBuilder.DropTable(
+                name: "Notes");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");

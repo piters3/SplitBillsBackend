@@ -15,6 +15,7 @@ namespace SplitBillsBackend.Data
         private static List<Subcategory> _rozrywka, _jedzenie, _dom, _zycie, _uzytkowanie, _transport;
         private static List<Bill> _bills;
         private static List<UserBill> _userbills;
+        private static List<Note> _notes;
 
 
         public static void Initialize(SplitBillsDbContext context)
@@ -36,6 +37,7 @@ namespace SplitBillsBackend.Data
                     AddSubcategories(context);
 
                     Console.WriteLine("Dodawanie rachunków...");
+                    AddNotes(context);
                     AddBills(context);
                     AddUserBills(context);
 
@@ -297,7 +299,7 @@ namespace SplitBillsBackend.Data
                     TotalAmount = 2.60m,
                     Date = new DateTime(2018, 6, 1, 12, 23, 4),
                     Description = "Bułki",
-                    Notes = "Dobry były",
+                    Notes = { _notes[0], _notes[1] },
                     Subcategory = _jedzenie[1]
                 },
                 new Bill
@@ -306,7 +308,7 @@ namespace SplitBillsBackend.Data
                     TotalAmount = 92.56m,
                     Date = new DateTime(2018, 4, 01, 12, 33, 14),
                     Description = "Jägermeister",
-                    Notes = "Na melanż",
+                    Notes = { _notes[2], _notes[3] },
                     Subcategory = _jedzenie[2]
                 },
                 new Bill
@@ -315,7 +317,7 @@ namespace SplitBillsBackend.Data
                     TotalAmount = 54.00m,
                     Date = new DateTime(2018, 6, 11, 10, 3, 49),
                     Description = "Kino",
-                    Notes = "Kino notatki",
+                    Notes = { _notes[4], _notes[5] },
                     Subcategory = _rozrywka[1]
                 },
                 new Bill
@@ -324,7 +326,7 @@ namespace SplitBillsBackend.Data
                     TotalAmount = 1500.00m,
                     Date = new DateTime(2018, 5, 9, 10, 30, 0),
                     Description = "Czynsz maj",
-                    Notes = "Brak",
+                    Notes = { _notes[6], _notes[7] },
                     Subcategory = _dom[6]
                 },
                 new Bill
@@ -333,7 +335,7 @@ namespace SplitBillsBackend.Data
                     TotalAmount = 50.00m,
                     Date = new DateTime(2018, 5, 10, 11, 30, 0),
                     Description = "Obiad",
-                    Notes = "Nie ma notatek",
+                    Notes = { _notes[8], _notes[9] },
                     Subcategory = _jedzenie[0]
                 }
             };
@@ -501,6 +503,33 @@ namespace SplitBillsBackend.Data
                 if (!context.Categories.Any(x => x.Name == c.Name))
                 {
                     context.Categories.Add(c);
+                }
+            }
+
+            context.SaveChanges();
+        }
+
+        private static void AddNotes(SplitBillsDbContext context)
+        {
+            _notes = new List<Note>
+            {
+                new Note {Text = "Jeden"},
+                new Note {Text = "Dwa"},
+                new Note {Text = "Trzy"},
+                new Note {Text = "Cztery"},
+                new Note {Text = "Pięć"},
+                new Note {Text = "Sześć"},
+                new Note {Text = "Siedem"},
+                new Note {Text = "Osiem"},
+                new Note {Text = "Dziewięć"},
+                new Note {Text = "Dziesięć"}
+            };
+
+            foreach (var n in _notes)
+            {
+                if (!context.Notes.Any(x => x.Text == n.Text))
+                {
+                    context.Notes.Add(n);
                 }
             }
 

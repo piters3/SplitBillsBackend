@@ -101,8 +101,6 @@ namespace SplitBillsBackend.Migrations
 
                     b.Property<string>("Description");
 
-                    b.Property<string>("Notes");
-
                     b.Property<int?>("SubcategoryId");
 
                     b.Property<decimal>("TotalAmount")
@@ -172,6 +170,23 @@ namespace SplitBillsBackend.Migrations
                     b.HasIndex("CreatorId");
 
                     b.ToTable("History");
+                });
+
+            modelBuilder.Entity("SplitBillsBackend.Entities.Note", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int?>("BillId");
+
+                    b.Property<string>("Text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BillId");
+
+                    b.ToTable("Notes");
                 });
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Role", b =>
@@ -376,6 +391,13 @@ namespace SplitBillsBackend.Migrations
                     b.HasOne("SplitBillsBackend.Entities.User", "Creator")
                         .WithMany()
                         .HasForeignKey("CreatorId");
+                });
+
+            modelBuilder.Entity("SplitBillsBackend.Entities.Note", b =>
+                {
+                    b.HasOne("SplitBillsBackend.Entities.Bill", "Bill")
+                        .WithMany("Notes")
+                        .HasForeignKey("BillId");
                 });
 
             modelBuilder.Entity("SplitBillsBackend.Entities.Subcategory", b =>
