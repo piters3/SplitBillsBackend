@@ -269,13 +269,13 @@ namespace SplitBillsBackend.Controllers
             _unitOfWork.BillsRepository.Add(bill);
             _unitOfWork.Complete();
 
-            //var qwe = new
-            //{
-            //    Message = "Dodano rachuenk",
-            //    Id = 3,
-            //    Http = "www.cos.pl"
-            //};
-            //_hubContext.Clients.All.SendAsync("SendNotification", qwe);
+            var qwe = new
+            {
+                Message = "Dodano rachuenk",
+                Id = 3,
+                Http = "www.cos.pl"
+            };
+            _hubContext.Clients.All.SendAsync("SendNotification", qwe);
 
             //_hubContext.Clients.Clients(new List<string>() { "connectionId1", "connectionId2",... }).sendMessage("hello word");
 
