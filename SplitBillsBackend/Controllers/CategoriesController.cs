@@ -21,7 +21,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet]
         public IEnumerable<CategoryModel> Get()
         {
-            var all = _unitOfWork.Categories.GetAll();
+            var all = _unitOfWork.CategoriesRepository.GetAll();
             var model = Mapper.Map<IEnumerable<CategoryModel>>(all);
             return model;
         }
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _unitOfWork.Categories.Get(id);
+            var entity = _unitOfWork.CategoriesRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -48,7 +48,7 @@ namespace SplitBillsBackend.Controllers
             }
 
             var entity = Mapper.Map<Category>(model);
-            _unitOfWork.Categories.Add(entity);
+            _unitOfWork.CategoriesRepository.Add(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -65,7 +65,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest();
             }
 
-            var entity = _unitOfWork.Categories.Get(id);
+            var entity = _unitOfWork.CategoriesRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -73,7 +73,7 @@ namespace SplitBillsBackend.Controllers
 
             Mapper.Map(model, entity);
 
-            _unitOfWork.Categories.Update(entity);
+            _unitOfWork.CategoriesRepository.Update(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -81,12 +81,12 @@ namespace SplitBillsBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var entity = _unitOfWork.Categories.Get(id);
+            var entity = _unitOfWork.CategoriesRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Categories.Remove(entity);
+            _unitOfWork.CategoriesRepository.Remove(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }

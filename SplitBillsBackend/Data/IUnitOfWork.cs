@@ -5,11 +5,12 @@ namespace SplitBillsBackend.Data
 {
     public interface IUnitOfWork : IDisposable
     {
-        IBillsRepository Bills { get; }
-        ICategoriesRepository Categories { get; }
-        IFriendsRepository Friends { get; }
-        ISubcategoriesRepository Subcategories { get; }
-        IUsersRepository Users { get; }
+        IBillsRepository BillsRepository { get; }
+        ICategoriesRepository CategoriesRepository { get; }
+        IFriendsRepository FriendsRepository { get; }
+        ISubcategoriesRepository SubcategoriesRepository { get; }
+        IUsersRepository UsersRepository { get; }
+        IHistoriesRepository HistoriesRepository { get; }
         int Complete();
     }
 }

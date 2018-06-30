@@ -21,7 +21,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet]
         public IEnumerable<BillModel> Get()
         {
-            var all = _unitOfWork.Bills.GetAll();
+            var all = _unitOfWork.BillsRepository.GetAll();
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
             return model;
         }
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _unitOfWork.Bills.Get(id);
+            var entity = _unitOfWork.BillsRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -44,7 +44,7 @@ namespace SplitBillsBackend.Controllers
             {
                 return BadRequest(ModelState);
             }
-            _unitOfWork.Bills.Add(entity);
+            _unitOfWork.BillsRepository.Add(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -60,11 +60,11 @@ namespace SplitBillsBackend.Controllers
             {
                 return BadRequest();
             }
-            if (_unitOfWork.Bills.Get(id) == null)
+            if (_unitOfWork.BillsRepository.Get(id) == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Bills.Update(entity);
+            _unitOfWork.BillsRepository.Update(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -72,12 +72,12 @@ namespace SplitBillsBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            Bill entity = _unitOfWork.Bills.Get(id);
+            Bill entity = _unitOfWork.BillsRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Bills.Remove(entity);
+            _unitOfWork.BillsRepository.Remove(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }

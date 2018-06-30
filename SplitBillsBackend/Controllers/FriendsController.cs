@@ -22,7 +22,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet]
         public IEnumerable<FriendModel> Get()
         {
-            var all = _unitOfWork.Friends.GetAll();
+            var all = _unitOfWork.FriendsRepository.GetAll();
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;
         }
@@ -30,7 +30,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _unitOfWork.Friends.Get(id);
+            var entity = _unitOfWork.FriendsRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -49,7 +49,7 @@ namespace SplitBillsBackend.Controllers
             }
 
             var entity = Mapper.Map<Friend>(model);
-            _unitOfWork.Friends.Add(entity);
+            _unitOfWork.FriendsRepository.Add(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -66,7 +66,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest();
             }
 
-            var entity = _unitOfWork.Friends.Get(id);
+            var entity = _unitOfWork.FriendsRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -74,7 +74,7 @@ namespace SplitBillsBackend.Controllers
 
             Mapper.Map(model, entity);
 
-            _unitOfWork.Friends.Update(entity);
+            _unitOfWork.FriendsRepository.Update(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -82,12 +82,12 @@ namespace SplitBillsBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var entity = _unitOfWork.Friends.Get(id);
+            var entity = _unitOfWork.FriendsRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Friends.Remove(entity);
+            _unitOfWork.FriendsRepository.Remove(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }

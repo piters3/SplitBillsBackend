@@ -20,7 +20,7 @@ namespace SplitBillsBackend.Data
         public DbSet<Subcategory> Subcategories { get; set; }
         public DbSet<UserBill> UserBills { get; set; }
         public DbSet<Friend> Friends { get; set; }
-        public DbSet<History> History { get; set; }
+        public DbSet<History> Histories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

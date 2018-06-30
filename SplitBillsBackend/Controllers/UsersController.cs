@@ -21,7 +21,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet]
         public IEnumerable<UserModel> Get()
         {
-            var all = _unitOfWork.Users.GetAll();
+            var all = _unitOfWork.UsersRepository.GetAll();
             var model = Mapper.Map<IEnumerable<UserModel>>(all);
             return (model);
         }
@@ -29,7 +29,7 @@ namespace SplitBillsBackend.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var entity = _unitOfWork.Users.Get(id);
+            var entity = _unitOfWork.UsersRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -48,7 +48,7 @@ namespace SplitBillsBackend.Controllers
             }
 
             var entity = Mapper.Map<User>(model);
-            _unitOfWork.Users.Remove(entity);
+            _unitOfWork.UsersRepository.Remove(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -65,7 +65,7 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest();
             }
 
-            var entity = _unitOfWork.Users.Get(id);
+            var entity = _unitOfWork.UsersRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
@@ -73,7 +73,7 @@ namespace SplitBillsBackend.Controllers
 
             Mapper.Map(model, entity);
 
-            _unitOfWork.Users.Update(entity);
+            _unitOfWork.UsersRepository.Update(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }
@@ -81,12 +81,12 @@ namespace SplitBillsBackend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var entity = _unitOfWork.Users.Get(id);
+            var entity = _unitOfWork.UsersRepository.Get(id);
             if (entity == null)
             {
                 return NotFound();
             }
-            _unitOfWork.Users.Remove(entity);
+            _unitOfWork.UsersRepository.Remove(entity);
             _unitOfWork.Complete();
             return Ok(entity);
         }

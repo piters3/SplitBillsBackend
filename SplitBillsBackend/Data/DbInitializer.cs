@@ -343,7 +343,7 @@ namespace SplitBillsBackend.Data
                 if (!context.Bills.Any(x => x.Description == b.Description))
                 {
                     context.Bills.Add(b);
-                    context.History.Add(new History
+                    context.Histories.Add(new History
                     {
                         Bill = b,
                         Creator = b.Creator,

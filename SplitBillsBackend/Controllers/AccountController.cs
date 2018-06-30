@@ -104,7 +104,7 @@ namespace SplitBillsBackend.Controllers
         public IEnumerable<FriendModel> Friends()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _unitOfWork.Friends.GetUserFriends(id);
+            var all = _unitOfWork.FriendsRepository.GetUserFriends(id);
             var model = Mapper.Map<IEnumerable<FriendModel>>(all);
             return model;
         }
@@ -115,7 +115,7 @@ namespace SplitBillsBackend.Controllers
         public IActionResult Expenses()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _unitOfWork.Bills.GetUserExpenses(id);
+            var all = _unitOfWork.BillsRepository.GetUserExpenses(id);
             var model = Mapper.Map<IEnumerable<BillModel>>(all);
 
             var expensesSummary = model.SelectMany(bill => bill.Payers).Sum(payer => payer.Amount);
@@ -132,7 +132,7 @@ namespace SplitBillsBackend.Controllers
         public IActionResult CommonExpenses(int friendId)
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var all = _unitOfWork.Bills.GetCommonExpenses(id, friendId);
+            var all = _unitOfWork.BillsRepository.GetCommonExpenses(id, friendId);
             var commonExpenses = Mapper.Map<IEnumerable<BillModel>>(all);
 
             var expensesSummary = 0.00m;
@@ -164,8 +164,8 @@ namespace SplitBillsBackend.Controllers
         public IActionResult Dashboard()
         {
             var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-            var billsCreatedByUser = _unitOfWork.Bills.GetBillsCreatedByUser(id);
-            var billsInWhichUserIsPayer = _unitOfWork.Bills.GetBillsInWhichUserIsPayer(id);
+            var billsCreatedByUser = _unitOfWork.BillsRepository.GetBillsCreatedByUser(id);
+            var billsInWhichUserIsPayer = _unitOfWork.BillsRepository.GetBillsInWhichUserIsPayer(id);
             var userBorrowers = new List<BorrowerModel>();
             var userOwedTo = new List<BorrowerModel>();
 
@@ -246,21 +246,21 @@ namespace SplitBillsBackend.Controllers
 
             foreach (var payer in model.Payers)
             {
-                userBills.Add(new UserBill { User = _unitOfWork.Users.Get(payer.Id), Amount = payer.Amount });
+                userBills.Add(new UserBill { User = _unitOfWork.UsersRepository.Get(payer.Id), Amount = payer.Amount });
             }
 
             var bill = new Bill
             {
-                Creator = _unitOfWork.Users.Get(model.CreatorId),
+                Creator = _unitOfWork.UsersRepository.Get(model.CreatorId),
                 Date = model.Date,
                 Description = model.Description,
                 Notes = model.Notes,
-                Subcategory = _unitOfWork.Subcategories.Get(model.SubcategoryId),
+                Subcategory = _unitOfWork.SubcategoriesRepository.Get(model.SubcategoryId),
                 TotalAmount = model.TotalAmount,
                 UserBills = userBills
             };
 
-            _unitOfWork.Bills.Add(bill);
+            _unitOfWork.BillsRepository.Add(bill);
             _unitOfWork.Complete();
 
             return new OkObjectResult(new
@@ -269,19 +269,24 @@ namespace SplitBillsBackend.Controllers
             });
         }
 
-        //// GET /api/Account/Activity
-        //[HttpGet("Activity")]
-        //public IActionResult Activity()
-        //{
-        //    var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-        //    var all = _repo.GetCommonExpenses(id, friendId);
-        //    var commonExpenses = Mapper.Map<IEnumerable<BillModel>>(all);
+        // GET /api/Account/Activity
+        [HttpGet("Activity")]
+        public IEnumerable<HistoryModel> Activity()
+        {
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+            var all = _unitOfWork.HistoriesRepository.GetHistoriesForUser(id);
 
+            var model = all.Select(history => new HistoryModel
+            {
+                Id = history.Id,
+                Date = history.Date,
+                Description = history.Description,
+                HistoryType = history.HistoryType,
+                UserName = history.Creator.UserName,
+                Amount = history.Creator.Id == id ? history.Bill.TotalAmount : history.Bill.UserBills.Single(x => x.User.Id == id).Amount * -1
+            }).ToList();
 
-        //    return new OkObjectResult(new
-        //    {
-        //        CommonExpenses = commonExpenses
-        //    });
-        //}
+            return model;
+        }
     }
 }
