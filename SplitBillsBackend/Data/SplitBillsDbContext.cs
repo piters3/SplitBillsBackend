@@ -22,6 +22,7 @@ namespace SplitBillsBackend.Data
         public DbSet<Friend> Friends { get; set; }
         public DbSet<History> Histories { get; set; }
         public DbSet<Note> Notes { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

@@ -18,6 +18,7 @@ namespace SplitBillsBackend.Data
         private ISubcategoriesRepository _subcategoriesRepository;
         private IUsersRepository _usersRepository;
         private IHistoriesRepository _historiesRepository;
+        private INotificationsRepository _notificationsRepository;
 
         public IBillsRepository BillsRepository => _billsRepository ?? (_billsRepository = new BillsRepository(_ctx));
         public ICategoriesRepository CategoriesRepository => _categoriesRepository ?? (_categoriesRepository = new CategoriesRepository(_ctx));
@@ -25,6 +26,7 @@ namespace SplitBillsBackend.Data
         public ISubcategoriesRepository SubcategoriesRepository => _subcategoriesRepository ?? (_subcategoriesRepository = new SubcategoriesRepository(_ctx));
         public IUsersRepository UsersRepository => _usersRepository ?? (_usersRepository = new UsersRepository(_ctx));
         public IHistoriesRepository HistoriesRepository => _historiesRepository ?? (_historiesRepository = new HistoriesRepository(_ctx));
+        public INotificationsRepository NotificationsRepository => _notificationsRepository ?? (_notificationsRepository = new NotificationsRepository(_ctx));
 
         public int Complete()
         {

@@ -248,13 +248,6 @@ namespace SplitBillsBackend.Controllers
                 return BadRequest(ModelState);
             }
 
-            //var userBills = new List<UserBill>();
-
-            //foreach (var payer in model.Payers)
-            //{
-            //    userBills.Add(new UserBill { User = _unitOfWork.UsersRepository.Get(payer.Id), Amount = payer.Amount });
-            //}
-
             var bill = new Bill
             {
                 Creator = _unitOfWork.UsersRepository.Get(model.CreatorId),
@@ -267,6 +260,34 @@ namespace SplitBillsBackend.Controllers
             };
 
             _unitOfWork.BillsRepository.Add(bill);
+
+            var history = new History
+            {
+                Bill = bill,
+                Creator = bill.Creator,
+                Date = bill.Date,
+                Description = bill.Description,
+                HistoryType = ActionType.Add
+            };
+
+            var notifications = new List<Notification>();
+
+            foreach (var reader in bill.UserBills)
+            {
+                if (reader.User.Id != bill.Creator.Id)
+                {
+                    notifications.Add(new Notification
+                    {
+                        Readed = false,
+                        Reader = reader.User,
+                        History = history
+                    });
+                }
+            }
+
+            _unitOfWork.HistoriesRepository.Add(history);
+            _unitOfWork.NotificationsRepository.AddRange(notifications);
+
             var usersToNofify = _unitOfWork.UsersRepository.GetUsersConnectionIds(model.Payers.Select(x => x.Id).ToList());
 
             //_hubContext.Clients.Clients(usersToNofify).SendAsync("SendNotification", $"Użytkownik {bill.Creator.UserName} dodał rachunek {model.Description}!");
@@ -301,5 +322,47 @@ namespace SplitBillsBackend.Controllers
         }
 
 
+        // GET /api/Account/Notifications
+        [HttpGet("Notifications")]
+        public IEnumerable<NotificationModel> GetUnreadedNotifications()
+        {
+            var id = Convert.ToInt32(User.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
+            var all = _unitOfWork.NotificationsRepository.GetUnreadedNotificationsForUser(id);
+
+            var model = all.Select(n => new NotificationModel
+            {
+                Id = n.Id,
+                Date = n.History.Date,
+                Description = n.History.Description,
+                HistoryType = n.History.HistoryType,
+                UserName = n.History.Creator.UserName,
+                Amount = n.History.Creator.Id == id ? n.History.Bill.TotalAmount : n.History.Bill.UserBills.Single(x => x.User.Id == id).Amount * -1
+            }).ToList();
+
+            return model;
+        }
+
+
+        // POST /api/Account/ReadNotification
+        [HttpPost("ReadNotification/{id}")]
+        public IActionResult ReadNotification(int id)
+        {
+            var notification = _unitOfWork.NotificationsRepository.Get(id);
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            notification.Readed = true;
+
+            _unitOfWork.NotificationsRepository.Update(notification);
+            _unitOfWork.Complete();
+
+            return new OkObjectResult(new
+            {
+                Message = "Odczytano!"
+            });
+        }
     }
 }

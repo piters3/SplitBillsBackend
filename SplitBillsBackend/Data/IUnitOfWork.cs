@@ -11,6 +11,7 @@ namespace SplitBillsBackend.Data
         ISubcategoriesRepository SubcategoriesRepository { get; }
         IUsersRepository UsersRepository { get; }
         IHistoriesRepository HistoriesRepository { get; }
+        INotificationsRepository NotificationsRepository { get; }
         int Complete();
     }
 }

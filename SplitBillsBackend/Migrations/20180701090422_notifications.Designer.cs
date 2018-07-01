@@ -10,8 +10,8 @@ using SplitBillsBackend.Data;
 namespace SplitBillsBackend.Migrations
 {
     [DbContext(typeof(SplitBillsDbContext))]
-    [Migration("20180630215449_notes")]
-    partial class notes
+    [Migration("20180701090422_notifications")]
+    partial class notifications
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

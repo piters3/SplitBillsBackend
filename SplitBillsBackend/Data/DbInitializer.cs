@@ -43,6 +43,9 @@ namespace SplitBillsBackend.Data
 
                     Console.WriteLine("Dodawanie przyjaciół...");
                     AddFriends(context);
+
+                    Console.WriteLine("Dodawanie historii...");
+                    AddHistories(context);
                 }
             }
         }
@@ -345,14 +348,14 @@ namespace SplitBillsBackend.Data
                 if (!context.Bills.Any(x => x.Description == b.Description))
                 {
                     context.Bills.Add(b);
-                    context.Histories.Add(new History
-                    {
-                        Bill = b,
-                        Creator = b.Creator,
-                        Date = b.Date,
-                        Description = b.Description,
-                        HistoryType = ActionType.Add
-                    });
+                    //context.Histories.Add(new History
+                    //{
+                    //    Bill = b,
+                    //    Creator = b.Creator,
+                    //    Date = b.Date,
+                    //    Description = b.Description,
+                    //    HistoryType = ActionType.Add
+                    //});
                 }
             }
 
@@ -533,6 +536,37 @@ namespace SplitBillsBackend.Data
                 }
             }
 
+            context.SaveChanges();
+        }
+
+        private static void AddHistories(SplitBillsDbContext context)
+        {
+            foreach (var b in context.Bills)
+            {
+                var history = new History
+                {
+                    Bill = b,
+                    Creator = b.Creator,
+                    Date = b.Date,
+                    Description = b.Description,
+                    HistoryType = ActionType.Add,
+                };
+
+                context.Histories.Add(history);
+
+                foreach (var reader in b.UserBills)
+                {
+                    if (reader.User.Id != b.Creator.Id)
+                    {
+                        context.Notifications.Add(new Notification
+                        {
+                            History = history,
+                            Readed = false,
+                            Reader = reader.User
+                        });
+                    }
+                }
+            }
             context.SaveChanges();
         }
     }

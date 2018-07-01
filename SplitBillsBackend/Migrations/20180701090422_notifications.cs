@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace SplitBillsBackend.Migrations
 {
-    public partial class notes : Migration
+    public partial class notifications : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
