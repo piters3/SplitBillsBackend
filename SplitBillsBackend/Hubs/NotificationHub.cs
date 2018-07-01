@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -13,7 +14,6 @@ namespace SplitBillsBackend.Hubs
     {
         private readonly IUnitOfWork _unitOfWork;
         public static ClaimsIdentity Identity { get; set; }
-        public static User CurrentUser { get; set; }
 
         public NotificationHub(IUnitOfWork unitOfWork)
         {
@@ -23,6 +23,12 @@ namespace SplitBillsBackend.Hubs
         public async Task SendNotification(object message)
         {
             await Clients.All.SendAsync("SendNotification", message);
+        }
+
+        public async Task SendToUser(string id, object message)
+        {
+            //await Clients.User(id).SendAsync("SendToUser", message);
+            await Clients.Client(id).SendAsync("SendToUser", message);
         }
 
         //public async Task SendNotification(string userId, object message)
@@ -37,30 +43,34 @@ namespace SplitBillsBackend.Hubs
 
         public override Task OnConnectedAsync()
         {
-            var connectionId = Context.ConnectionId;
             if (Identity != null)
             {
                 var userId = Convert.ToInt32(Identity.Claims.Single(c => c.Type == Constants.JwtClaimIdentifiers.Id).Value);
-                CurrentUser = _unitOfWork.UsersRepository.Get(userId);
-                CurrentUser.Connected = true;
-                CurrentUser.ConnectionId = connectionId;
-                _unitOfWork.UsersRepository.Update(CurrentUser);
+                var loggingInUser = _unitOfWork.UsersRepository.Get(userId);
+
+                loggingInUser.Connected = true;
+                loggingInUser.ConnectionId = Context.ConnectionId;
+
+                _unitOfWork.UsersRepository.Update(loggingInUser);
                 _unitOfWork.Complete();
             }
-                  
+
             return base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            CurrentUser.Connected = false;
-            CurrentUser.ConnectionId = null;
+            var connecionId = Context.ConnectionId;
+            var loggingOutUser = _unitOfWork.UsersRepository.Find(u => u.ConnectionId == connecionId).SingleOrDefault();
 
-            _unitOfWork.UsersRepository.Update(CurrentUser);
-            _unitOfWork.Complete();
+            if (loggingOutUser != null)
+            {
+                loggingOutUser.Connected = false;
+                loggingOutUser.ConnectionId = null;
 
-            Identity = null;
-            CurrentUser = null;
+                _unitOfWork.UsersRepository.Update(loggingOutUser);
+                _unitOfWork.Complete();
+            }
 
             return base.OnDisconnectedAsync(exception);
         }

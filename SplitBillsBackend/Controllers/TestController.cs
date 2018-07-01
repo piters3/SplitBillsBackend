@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using SplitBillsBackend.Entities;
 using SplitBillsBackend.Hubs;
+using SplitBillsBackend.Models;
 
 namespace SplitBillsBackend.Controllers
 {
@@ -17,7 +20,15 @@ namespace SplitBillsBackend.Controllers
         [HttpPost]
         public IActionResult Post()
         {
-            _hubContext.Clients.All.SendAsync("SendNotification", "SIEMA");
+            var notificationModel = new NotificationModel
+            {
+                Date = DateTime.Now,
+                Description = "Test",
+                HistoryType = ActionType.Add,
+                UserName = "Testowy",
+                Amount = 100
+            };
+            _hubContext.Clients.All.SendAsync("SendNotification", notificationModel);
 
             return Ok();
         }     

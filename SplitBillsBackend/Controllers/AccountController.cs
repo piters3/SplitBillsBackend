@@ -288,10 +288,7 @@ namespace SplitBillsBackend.Controllers
             _unitOfWork.HistoriesRepository.Add(history);
             _unitOfWork.NotificationsRepository.AddRange(notifications);
 
-            var usersToNofify = _unitOfWork.UsersRepository.GetUsersConnectionIds(model.Payers.Select(x => x.Id).ToList());
-
-            //_hubContext.Clients.Clients(usersToNofify).SendAsync("SendNotification", $"Użytkownik {bill.Creator.UserName} dodał rachunek {model.Description}!");
-            _hubContext.Clients.All.SendAsync("SendNotification", $"Użytkownik {bill.Creator.UserName} dodał rachunek {model.Description}!");
+            SendNotifications(bill, notifications);
 
             _unitOfWork.Complete();
 
@@ -300,6 +297,27 @@ namespace SplitBillsBackend.Controllers
                 Message = "Rachunek został dodany"
             });
         }
+
+        private void SendNotifications(Bill bill, List<Notification> notifications)
+        {
+            foreach (var notification in notifications)
+            {
+                if (notification.Reader.Connected)
+                {
+                    var notificationModel = new NotificationModel
+                    {
+                        Date = bill.Date,
+                        Description = bill.Description,
+                        HistoryType = ActionType.Add,
+                        UserName = bill.Creator.UserName,
+                        Amount = bill.UserBills.Single(x => x.User.Id == notification.Reader.Id).Amount
+                    };
+                    _hubContext.Clients.Client(notification.Reader.ConnectionId).SendAsync("SendToUser", notificationModel);
+                }
+            }
+            //_hubContext.Clients.All.SendAsync("SendNotification", "Asd");
+        }
+
 
         // GET /api/Account/Activity
         [HttpGet("Activity")]
@@ -331,7 +349,6 @@ namespace SplitBillsBackend.Controllers
 
             var model = all.Select(n => new NotificationModel
             {
-                Id = n.Id,
                 Date = n.History.Date,
                 Description = n.History.Description,
                 HistoryType = n.History.HistoryType,
